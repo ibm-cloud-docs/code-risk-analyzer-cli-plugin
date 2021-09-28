@@ -18,10 +18,10 @@ keywords: code risk analyzer, cli, code risk analyzer command line, code risk an
 {:tip: .tip}
 {:note: .note}
 
-# Code Risk Analyzer plug-in for {{site.data.keyword.cloud}}
+# Code Risk Analyzer plug-in for {{site.data.keyword.cloud_notm}}
 {: #cra-cli-plugin}
 
-The {{site.data.keyword.cloud_notm}} command-line interface (CLI) provides code risk analysis commands. You can use the {{site.data.keyword.cloud_notm}} CLI to analyze your code for vulnerabilities and compliance with certain rules. Code Risk Analyzer is available in all {{site.data.keyword.cloud_notm}} regions where toolchains are supported.
+The {{site.data.keyword.cloud}} command-line interface (CLI) provides code risk analysis commands. You can use the {{site.data.keyword.cloud_notm}} CLI to analyze your code for vulnerabilities and compliance with certain rules. Code Risk Analyzer is available in all {{site.data.keyword.cloud_notm}} regions where toolchains are supported.
 {: shortdesc}
 
 You can use the CLI to complete the following tasks:
