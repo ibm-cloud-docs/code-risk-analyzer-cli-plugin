@@ -1,0 +1,8 @@
+{:navgroup: .navgroup}
+{:topicgroup: .topicgroup}
+
+{: .toc subcollection="code-risk-analyzer-cli-plugin" audience="cli" href="/docs/code-risk-analyzer-cli-plugin.html" path="code-risk-analyzer-cli-plugin"} 
+IBM Cloud Code Risk Analyzer CLI
+
+    {: .navgroup id="reference"}
+    cra-cli.md
