@@ -2,7 +2,7 @@
  
 copyright:
   years: 2021
-lastupdated: "2021-09-24"
+lastupdated: "2021-10-05"
 
 subcollection: code-risk-analyzer-cli-plugin
 
@@ -306,7 +306,7 @@ ibmcloud cra deployment-analyze --path PATH --report REPORT [--fileignore FILE_I
 ibmcloud cra depl --path ./sampleDir --report deployment-report.json --strict
 ```
 
-## Terraform
+## Terraform Analyzer
 {: #terraform-command}
 
 You can use the `terraform-validate` command to analyze a Terraform plan for compliance before applying the plan to an environment. This command analyzes the specified Terraform Plan file for compliance with goals that are specified in the IBM Security and Compliance Center (SCC). This command generates a compliance report. 
@@ -777,8 +777,10 @@ ibmcloud cra tf -r report-user-rofile.json -t ./tfplan.json  -p ./user-profile.j
 }
 ```
 
-### {{site.data.keyword.compliance_short}} policies in Terraform analysis
-{: #terraform-scc-policies}
+### {{site.data.keyword.compliance_short}} goals
+{: #terraform-scc-goals}
+
+The Terraform Analyzer supports the following {{site.data.keyword.compliance_short}} goals:
 
 ```
 3000001 - Ensure IBMid password policy requires at least one uppercase letter
@@ -983,6 +985,18 @@ ibmcloud cra tf -r report-user-rofile.json -t ./tfplan.json  -p ./user-profile.j
 3000804 - Ensure Kubernetes Service clusters are enabled with IBM Cloud Monitoring
 3000805 - Ensure Kubernetes Service clusters are enabled with IBM Log Analysis
 ```
+
+## Using Code Risk Analyzer in Tekton pipelines
+{: #cra-tekton-pipelines}
+
+You can use the [`task-cra`](https://github.com/open-toolchain/tekton-catalog/tree/master/cra#cra){: external} task in Tekton pipelines. Use the [Tekton pipeline definition](https://github.com/open-toolchain/tekton-catalog/tree/master/cra/sample-v2){: external} when you create a pull request, a manual trigger, or issue a commit. You can also create your own Tekton tasks and run the Code Risk Analyzer from those tasks.
+
+## Removing stored Code Risk Analyzer data
+{: #cra-remove-data}
+
+The Code Risk Analyzer plug-in does not store any client data in its databases. However, earlier versions of Code Risk Analyzer Tekton tasks securely stored the results of vulnerability scans in its database.
+
+To request the removal of any client data that might be stored in the Code Risk Analyzer, contact [IBM Support](https://cloud.ibm.com/unifiedsupport/supportcenter){: external}.
 
 ## FAQs
 {: #faq}
