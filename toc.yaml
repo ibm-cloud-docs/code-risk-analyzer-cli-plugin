@@ -4,7 +4,7 @@ toc:
     subcollection: code-risk-anaylzer-cli-plugin
     version: 2
     category: platform_services
-    audience: cli
+    audience: platform
     href: /docs/code-risk-analyzer-cli-plugin
     console-page: "/devops/getting-started"
     product-page: "https://www.ibm.com/cloud/continuous-delivery"
