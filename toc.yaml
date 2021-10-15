@@ -2,10 +2,11 @@
 toc:
   properties:
     subcollection: code-risk-anaylzer-cli-plugin
-    category: dev_ops
+    version: 2
+    category: platform_services
     audience: cli
     href: /docs/code-risk-analyzer-cli-plugin
-    console-page: "/devops/create"
+    console-page: "/devops/getting-started"
     product-page: "https://www.ibm.com/cloud/continuous-delivery"
     path: code-risk-analyzer-cli-plugin
     label: IBM Cloud Code Risk Analyzer CLI
