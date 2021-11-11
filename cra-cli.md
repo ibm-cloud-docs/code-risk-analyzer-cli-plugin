@@ -97,7 +97,7 @@ ibmcloud cra --help
 
 The following command displays the details of flags that are used with a command. Use `ibmcloud cra --help` to display the available commands.
 
-```
+```sh
 ibmcloud cra <command> --help
 ```
 
@@ -158,7 +158,7 @@ If the path contains the `.cra/.fileignore` file, files that are specified in th
 
 The following example `.fileignore` file shows how to exclude bash scripts, node_modules, and the Dockerfile.
 
-```
+```text
 # Ignore nested functional_tests directory
 **/functional_tests
 
@@ -231,10 +231,10 @@ The following example shows a JSON schema for the `.cveignore` file:
 
 The following properties are supported for each entry in the `.cveignore` file:
 
- * **cve** - The vulnerability to omit. The value of this property is either a CVE ID or a Snyk ID.
- * **alwaysOmit** - If this property is set to `true`, the vulnerability is omitted until it is changed. This property takes precedence over other property values.
- * **untilRemediationAvailable** - If this property is set to `true`, the vulnerability is omitted  until a remediation path is available. If a remediation becomes available, the vulnerability is not omitted and a message is displayed. This property takes precedence over the expiration property value.
- * **expiration** - If this property is set to `true` and the expiration date is not reached, the vulnerability is omitted. If the expiration date is reached, the vulnerability is not omitted and a message is displayed. 
+* **cve** - The vulnerability to omit. The value of this property is either a CVE ID or a Snyk ID.
+* **alwaysOmit** - If this property is set to `true`, the vulnerability is omitted until it is changed. This property takes precedence over other property values.
+* **untilRemediationAvailable** - If this property is set to `true`, the vulnerability is omitted  until a remediation path is available. If a remediation becomes available, the vulnerability is not omitted and a message is displayed. This property takes precedence over the expiration property value.
+* **expiration** - If this property is set to `true` and the expiration date is not reached, the vulnerability is omitted. If the expiration date is reached, the vulnerability is not omitted and a message is displayed. 
  
 The Code Risk Analyzer uses only these defined properties. You can add properties with no effect on functions. If a vulnerability that is defined in the `.cveignore` is not omitted, a log is generated that explains the reason. If a vulnerability that is defined in the `.cveignore` file is omitted, no individual logging is displayed. The number of omissions and a list of the vulnerability IDs, with the package name, that are omitted are logged after a report is completed.
 
@@ -345,8 +345,9 @@ ibmcloud cra terraform-validate --tf-plan TFPLANFILE --report REPORT [--policy-f
 ibmcloud cra tf -r report-user-rofile.json -t ./tfplan.json  -p ./user-profile.json --verbose
 ```
 #### Example Terraform plan file for the `terraform-validate` command
+{: #terraform-example-validate}
 
-```
+```text
 {
     "format_version": "0.2",
     "terraform_version": "1.0.2",
@@ -749,8 +750,9 @@ ibmcloud cra tf -r report-user-rofile.json -t ./tfplan.json  -p ./user-profile.j
 
 
 #### Example profile file for the `terraform-validate` command
+{: #terraform-example-profile}
 
-```
+```text
 {
     "scc_goals": [
         {
@@ -782,7 +784,7 @@ ibmcloud cra tf -r report-user-rofile.json -t ./tfplan.json  -p ./user-profile.j
 
 The Terraform Analyzer supports the following {{site.data.keyword.compliance_short}} goals:
 
-```
+```text
 3000001 - Ensure IBMid password policy requires at least one uppercase letter
 3000002 - Ensure IBMid password policy requires at least one lowercase letter
 3000003 - Ensure IBMid password policy requires at least one number
