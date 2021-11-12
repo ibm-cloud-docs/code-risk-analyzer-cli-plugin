@@ -324,7 +324,7 @@ The following table lists the options that you can use for the `terraform-valida
 | --------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | `-r`, `--report`      | Required             | The path to the generated report.                                                                                                         |
 | `-t`, `--tf-plan`     | Required             | The path to the input Terraform plan file.                                                                                                      |
-| `-p`, `--policy-file` | Optional             | The path to the policy profile file. This file must contain `scc_goals` and `scc_goal_parameters` that overwrite default SCC values. |
+| `-p`, `--policy-file` | Optional             | The path to the policy profile file. This file must contain `scc_goals` and `scc_goal_parameters` that overwrite default SCC values. The policy profile JSON file can also contain comments without quoted values. The file can also contain the `.jsonc` file extension for JSON profiles with comments. |
 | `-q`, `--quiet`       | Optional             | Displays only summarized information.                                                                                                     |
 | `-s`, `--strict`      | Optional             | Results in command failure (exit status 2) if policies fail.                                                                              |
 | `-v`, `--verbose`     | Optional             | Displays the list of passing SCC Goals after the list of failed SCC goals.                                                                |
