@@ -115,7 +115,7 @@ ibmcloud cra bom-generate
 
 The `bom-generate` command depends on certain external commands:
 
-* If the path contains Dockerfiles, this command pulls down base images and build images for every build stage in each Dockerfile. In this scenario, the `bom-generate` command requires that the `Docker cli `and `tar` commands are available.
+* If the path contains Dockerfiles, this command pulls down base images and build images for every build stage in each Dockerfile. In this scenario, the `bom-generate` command requires that the `Docker cli` and `tar` commands are available.
 * If the path contains Maven files, this command uses `mvn` to build a list of dependencies. In this scenario, the `bom-generate` command requires the `mvn` command to be available.
 * If the path contains Gradle files, this command uses `gradle` to build a list of dependencies. In this scenario, the `bom-generate` command requires the `gradle` command to be available.
 * If the path contains Node.js `pacakge-json` files and this command is used to generate a corresponding `package-lock.json` file, the `bom-generate` command uses `npm` to build the package-lock.json file. In this scenario, the command requires the `npm` command to be available.
@@ -140,10 +140,8 @@ The following table lists the command options that you can use to generate a BOM
 | -------------------------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `--path`                               | Required             | The project directory path to scan.                                                                                                                                                                                                                      |
 | `-r`, `--report`                       | Required             | The file name in which to store the BOM report.                                                                                                                                                                                                          |
-| `-a`, `--asset-type`                   | Optional             | The security checks to run (apps, image, os, all). By default, this option is set to `all`. The `apps` option is used to limit discovery to application packages.  The `image` option is used to limit discovery to base images that are used in Dockerfiles. The `os` option is used to limit discovery to build stages in Dockerfiles only. You can specify multiple values by using a comma to delimit the values, such as `-a os,image,apps`.
-|
-| `-p`, `--prev-report`                  | Optional             | Use previous the BoM report to speed up the command. For example, if a Dockerfile was not updated since the last report was generated, the command skips the discovery of packages from that Dockerfile. The same scenario applies to other manifest files such as the `package-lock.json` file.  
-|
+| `-a`, `--asset-type`                   | Optional             | The security checks to run (apps, image, os, all). By default, this option is set to `all`. The `apps` option is used to limit discovery to application packages.  The `image` option is used to limit discovery to base images that are used in Dockerfiles. The `os` option is used to limit discovery to build stages in Dockerfiles only. You can specify multiple values by using a comma to delimit the values, such as `-a os,image,apps`.                                                                                                                                                                                |
+| `-p`, `--prev-report`                  | Optional             | Use previous the BoM report to speed up the command. For example, if a Dockerfile was not updated since the last report was generated, the command skips the discovery of packages from that Dockerfile. The same scenario applies to other manifest files such as the `package-lock.json` file.                                                                                                                                                                                |
 | `-f`, `--dockerbuildflags`             | Optional             | Customize the Docker build command for build stage scanning. Instead of using this command-line flag, you can specify the value in an environment variable named `DOCKERBUILDFLAGS`. By default, this command option is set to `''`. If you use this option, make sure that it is the last flag that is provided to the command. |
 | `-g`, `--gradle.excludeconfigurations` | Optional             | Exclude the Gradle configurations, for example: `runtimeClasspath,testCompileClasspath`. By default, this command option is set to `''`.                                                                                                                                |
 | `-m`, `--maven.excludescopes`          | Optional             | Exclude the Maven scopes, for example: `test,compile`. Example: 'test,compile'. By default, this command option is set to `''`.                                                                                                                                         |
@@ -344,6 +342,7 @@ ibmcloud cra terraform-validate --tf-plan TFPLANFILE --report REPORT [--policy-f
 ```sh
 ibmcloud cra tf -r report-user-rofile.json -t ./tfplan.json  -p ./user-profile.json --verbose
 ```
+
 #### Example Terraform plan file for the `terraform-validate` command
 {: #terraform-example-validate}
 
@@ -1009,11 +1008,11 @@ Get answers to frequently asked questions about using the Code Risk Analyzer CLI
 {: #faq-cli-failure}
  
 Before you call the Code Risk Analyzer CLI, set the `IBMCLOUD_TRACE` environment variable to true to turn on the debug log.
-      
-  ```sh
-  export IBMCLOUD_TRACE=true
-  ```
-      
+
+```sh
+export IBMCLOUD_TRACE=true
+```
+
 Observe the API calls and the responses that are shown in the log to determine the exact reason for failure.
 
 ### How can I debug a BOM command that fails to pull a base image from a private registry.
