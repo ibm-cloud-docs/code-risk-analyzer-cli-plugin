@@ -2,7 +2,7 @@
  
 copyright:
   years: 2021
-lastupdated: "2021-10-05"
+lastupdated: "2021-11-25"
 
 subcollection: code-risk-analyzer-cli-plugin
 
@@ -16,7 +16,6 @@ keywords: code risk analyzer, cli, code risk analyzer command line, code risk an
 {:pre: .pre}
 {:screen: .screen}
 {:tip: .tip}
-{:note: .note}
 
 # Code Risk Analyzer plug-in for {{site.data.keyword.cloud_notm}}
 {: #cra-cli-plugin}
@@ -991,6 +990,120 @@ The Terraform Analyzer supports the following {{site.data.keyword.compliance_sho
 {: #cra-tekton-pipelines}
 
 You can use the [`task-cra`](https://github.com/open-toolchain/tekton-catalog/tree/master/cra#cra){: external} task in Tekton pipelines. Use the [Tekton pipeline definition](https://github.com/open-toolchain/tekton-catalog/tree/master/cra/sample-v2){: external} when you create a pull request, a manual trigger, or issue a commit. You can also create your own Tekton tasks and run the Code Risk Analyzer from those tasks.
+
+## Using Code Risk Analyzer in DevSecOps
+{: #cra-devsecops}
+
+You can use Code Risk Analyzer in [DevSecOps](/docs/devsecops?topic=devsecops-devsecops_intro). The following table lists and describes the supported Code Risk Analyzer parameters for DevSecOps.
+
+For more information about the dependent utility commands that are required by the pipeline image to run the `bom-generate` command, see [BOM requirements](#bom-requirements). If commands are missing, you can use the `cra-custom-script-path` parameter to reference a script to install those commands.
+{: tip}
+
+
+|Name |Type	|Description |Required or Optional |
+|:----------|:------------------------------|:------------------|:----------|
+|artifactory-dockerconfigjson 		|SECRET 		|The base64-encoded Docker `config.json` file that stores credential information for Artifactory.	 			|Optional			|
+|baseimage-auth-user		|text		|The credentials for the base image of the application Dockerfile that is required by the Code Risk Analyzer scan.			|Optional			|
+|baseimage-auth-email		|text 		|The credentials for the base image of the application Dockerfile that is required by the Code Risk Analyzer scan.		|Optional			|
+|baseimage-auth-host		|text		|The credentials for the base image of the application Dockerfile that is required by the Code Risk Analyzer scan.	|Optional			|
+|baseimage-auth-password		|SECRET		|The credentials for the base image of the application Dockerfile that is required by the Code Risk Analyzer scan. |Optional			|
+|cra-cveignore-path             |text   |The path to the `cveignore` file that is relative to the root of the application repo. The default file path is `.cra/.cveignore`.   |Optional    | 
+| cra-custom-script-path  | text   | The path to a custom script that runs before Code Risk Analyzer scanning. This script is sourced to provide the option to set `ENV` variables in the context of the Code Risk Analyzer BOM tool. | Optional |
+|cra-docker-buildflags          |text   |The custom Docker build command for build stage scanning. This parameter is empty by default.    |Optional    |
+|cra-docker-build-context        | text  |If specified, Code Risk Analyzer uses the directory in the path parameter as the Docker build context.        |Optional    |
+|cra-exclude-devdependencies		|text		|Specifies whether to exclude dev dependencies from scanning (`true` or `false`). The default value is `false`.	|Optional			|
+|cra-gradle-exclude-configs     |text   |Specifies which Gradle configurations to exclude dependencies from in scanning. For example, `runtimeClasspath,testCompileClasspath`. This parameter is empty by default.   |Optional   |
+|cra-maven-exclude-scopes       |text   |Specifies which Maven scopes to exclude dependencies from in scanning. For example, `test,compile`. This parameter is empty by default.  |Optional   |
+|cra-nodejs-create-package-lock		|text		|Enables Code Risk Analyzer discovery to build the `package-lock.json` file for node.js repos. This parameter is set to `false` by default.	|Optional			|
+|cra-python-create-requirements-txt		|text		|Deprecated. The new Code Risk Analyzer tools don't use this parameter. Enable Code Risk Analyzer discovery to build the `requirements.txt` file for Python repos. This parameter is set to `false` by default.	|Optional			|
+|ibmcloud-api-key		|SECRET		|The {{site.data.keyword.cloud}} API key that interacts with the `ibmcloud` CLI tool.	|Required			|
+|pipeline-dockerconfigjson		|SECRET		|The base64-encoded Docker `config.json` file that pulls images from a private registry.	|Optional			|
+|onepipeline-dockerconfigjson		|SECRET		|Deprecated. The base64-encoded Docker `config.json` file that pulls images from a private registry.	|Optional			|
+|pipeline-debug		|select		|The pipeline debug mode switch.	|Optional			|
+{: caption="Table 6. DevSecOps Code Risk Analyzer-based parameters" caption-side="top"}
+
+### Example custom scripts for DevSecOps
+{: #devsecops-custom-script-examples}
+
+If your Dockerfile requires ARGS, you can use the `cra-custom-script-path` parameter to set an individual ARG as an environment variable before you run the command. The custom script path is the path to a script that resides in the user's project. For example, if the Dockerfile uses `IAM_USER ARG`, export an environment variable inside the script that is named `IAM_USER: export IAM_USER='value'`. If the ARG that is required by your Dockerfile is set as an environment property within toolchains, you can use `get_env` to get the value. In this instance, you can export an environment variable within the `IAM_USER: export IAM_USER=$(get_env iam_user_environment_property_name)` script.  The `run-cra` task automatically picks up these environment variables and passes them to the Docker build commands.
+
+The following example shows how to use the `cra-custom-script` to export the `ENV` variable:
+
+```bash
+#!/usr/bin/env bash
+
+if [[ "${PIPELINE_DEBUG:-0}" == 1 ]]; then
+    trap env EXIT
+    env | sort
+    set -x
+fi
+
+export IAM_USER=$(get_env iam_user_environment_property_name)
+```
+
+You can also use the `cra-custom-script-path` parameter for scenarios in which the DevSecOps base image tool versions might be outdated, based on your project. For example, you can update commands such as `pip/pip3` for discovering Python packages that require a later pip version. 
+
+The following example shows how to use the `cra-custom-script` to update the pip version:
+
+```bash
+#!/usr/bin/env bash
+
+if [[ "${PIPELINE_DEBUG:-0}" == 1 ]]; then
+    trap env EXIT
+    env | sort
+    set -x
+fi
+
+python3 -m pip install --upgrade pip
+```
+
+If your Dockerfile uses an image from a private Docker registry, you can use the `cra-custom-script-path` parameter to authenticate to a private Docker registry before you run Code Risk Analyzer and to allow Code Risk Analyzer to pull this image for scanning. 
+
+The following example shows how to use the `cra-custom-script` to authenticate to the `ibmcloud` container registry:
+
+```bash
+#!/usr/bin/env bash
+
+if [[ "${PIPELINE_DEBUG:-0}" == 1 ]]; then
+    trap env EXIT
+    env | sort
+    set -x
+fi
+
+ibmcloud cr login
+```
+
+### Debugging the Code Risk Analyzer in DevSecOps
+{: #debugging-cra-devsecops}
+
+To help with debugging, you can run the Code Risk Analyzer locally as a command-line interface (CLI) on your own local machine. For information about running the `ibmcloud cra bom-generate` command to generate a BOM file, see [Bill of Materials (BOM)](#bom-generate-command). After you generate the BOM file, use the `ibmcloud cra cve` command to list any vulnerabilities. For more information about running the `ibmcloud cra cve` command, see [Vulnerability scan](#vulnerability-command).
+
+Make sure that the `run-cra` task does not contain any errors. If the task contains errors, check whether your pipeline uses the current version of DevSecOps. If the issue is not resolved by checking the version of DevSecOps, the following examples provide some common errors and proposed solutions.
+
+```text
+FAILED
+Error executing docker pull cmd: [docker pull us.icr.io/opentoolchain/ibmnode:14ubisecure]
+```
+
+You can verify that you have access to the private registry. If you do not have access, you can use the `cra-custom-script-path` parameter and specify the path to a custom script that runs before Code Risk Analyzer to authenticate to the private registry. 
+
+```text
+FAILED
+Error executing docker build cmd for stage-0: exit status 1
+```
+
+If your Dockerfile requires ARGS, the `docker build` command for the build stages fails to build because of the missing ARGS. The `cra-custom-script-path` is required to set up the ARGS as environment variables. For more information about setting up the custom script, see [Example custom scripts for DevSecOps](#devsecops-custom-script-examples).
+
+```text
+FAILED
+Error executing docker build cmd for stage-0: exit status 1
+...
+COPY file-to-copy.js file-to-copy.js:
+------
+failed to compute cache key: "/file-to-copy.js" not found: not found
+```
+
+By default, the Code Risk Analyzer `bom-generate` command builds the Dockerfiles from the context of the location of the Dockerfile itself. If you want to build the Dockerfiles from the context of the root project directory, use the `cra-docker-build-context` parameter to allow the Code Risk Analyzer to build the Dockerfiles from this context.
 
 ## Removing stored Code Risk Analyzer data
 {: #cra-remove-data}
