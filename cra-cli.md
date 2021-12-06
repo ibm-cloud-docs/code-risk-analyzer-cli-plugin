@@ -2,7 +2,7 @@
  
 copyright:
   years: 2021
-lastupdated: "2021-11-25"
+lastupdated: "2021-12-06"
 
 subcollection: code-risk-analyzer-cli-plugin
 
@@ -829,7 +829,7 @@ The Terraform Analyzer supports the following {{site.data.keyword.compliance_sho
 3000211 - Ensure Databases for Elasticsearch encryption is enabled
 3000212 - Ensure Databases for Elasticsearch encryption is enabled with BYOK
 3000213 - Ensure Databases for Elasticsearch is accessible only through HTTPS
-3000214 - Ensure Databases for Elasticsearch is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
+3000214 - Ensure Databases for Elasticsearch is accessible only through private endpoints
 3000216 - Ensure Databases for etcd is enabled with encryption
 3000217 - Ensure Databases for etcd is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
 3000218 - Ensure Databases for etcd is accessible only through HTTPS
@@ -936,11 +936,13 @@ The Terraform Analyzer supports the following {{site.data.keyword.compliance_sho
 3000430 - Ensure Application Load Balancer for VPC has health check configured when created
 3000431 - Ensure Application Load Balancer for VPC has a health check protocol that is either HTTP or HTTPS
 3000432 - Ensure Application Load Balancer for VPC pool uses the HTTPS protocol for HTTPS listeners
-3000433 - Ensure Application Load Balancer for VPC is configured to convert HTTP client requests to HTTPS 
+3000433 - Ensure Application Load Balancer for VPC is configured to convert HTTP client requests to HTTPS
 3000434 - Ensure Application Load Balancer for VPC uses HTTPS (SSL & TLS) instead of HTTP
+3000436 - Check whether Block Storage for VPC is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
 3000437 - Check whether Block Storage for VPC is enabled with customer-managed encryption and Keep Your Own Key (KYOK)
+3000439 - Check whether data disks are encrypted with customer-managed keys
+3000440 - Check whether unattached disks are encrypted with customer-managed keys
 3000444 - Ensure Security Groups for VPC contains no outbound rules in security groups that specify source IP 8.8.8.8/32 to DNS port 53
-3000445 - Ensure Security Groups for VPC doesn't allow SSH for the default security group
 3000446 - Ensure Security Groups for VPC doesn't allow PING for the default security group
 3000447 - Ensure Virtual Private Cloud (VPC) classic access is disabled
 3000449 - Ensure Virtual Private Cloud (VPC) has no public gateways attached
@@ -984,6 +986,8 @@ The Terraform Analyzer supports the following {{site.data.keyword.compliance_sho
 3000802 - Ensure Kubernetes Service is accessible only by using private endpoints
 3000804 - Ensure Kubernetes Service clusters are enabled with IBM Cloud Monitoring
 3000805 - Ensure Kubernetes Service clusters are enabled with IBM Log Analysis
+3000902 - Ensure OpenShift clusters are accessible only by using private endpoints
+3000907 - Check whether OpenShift version is up-to-date
 ```
 
 ## Using Code Risk Analyzer in Tekton pipelines
