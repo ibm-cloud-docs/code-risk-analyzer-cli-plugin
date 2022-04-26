@@ -206,8 +206,7 @@ The following table lists the options for using the `vulnerability-scan` command
 | `-c`, `--cveignore`  | Required             | The file path of the CVE Ignore file that contains the list of CVEs to ignore.                                      |
 | `-e`, `--excludedev` | Optional             | Specifies that you do not want the command to report CVEs for development dependencies.                                     |
 | `-r`, `--report`     | Optional             | The path to the generated report.                                          |
-| `-o`, `--output`     | Optional             | Selects the CVE report format. You can generate the format output in either Standard CVE format (`standard`) or CycloneDX's VEX format (`cyclonedx`). The default value is `standard`.
-|
+| `-o`, `--output`     | Optional             | Selects the CVE report format. You can generate the format output in either Standard CVE format (`standard`) or CycloneDX's VEX format (`cyclonedx`). The default value is `standard`. |
 | `-s`, `--strict`     | Optional             | Results in command failure (exit status 2) when vulnerabilities are found. |
 {: caption="Table 3. Command options for performing a vulnerability scan." caption-side="top"}
 
