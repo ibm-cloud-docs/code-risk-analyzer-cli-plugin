@@ -1,8 +1,8 @@
 ---
  
 copyright:
-  years: 2021
-lastupdated: "2021-12-06"
+  years: 2021, 2022
+lastupdated: "2022-04-26"
 
 subcollection: code-risk-analyzer-cli-plugin
 
@@ -140,7 +140,8 @@ The following table lists the command options that you can use to generate a BOM
 | `--path`                               | Required             | The project directory path to scan.                                                                                                                                                                                                                      |
 | `-r`, `--report`                       | Required             | The file name in which to store the BOM report.                                                                                                                                                                                                          |
 | `-a`, `--asset-type`                   | Optional             | The security checks to run (apps, image, os, all). By default, this option is set to `all`. The `apps` option is used to limit discovery to application packages.  The `image` option is used to limit discovery to base images that are used in Dockerfiles. The `os` option is used to limit discovery to build stages in Dockerfiles only. You can specify multiple values by using a comma to delimit the values, such as `-a os,image,apps`.                                                                                                                                                                                |
-| `-p`, `--prev-report`                  | Optional             | Use previous the BoM report to speed up the command. For example, if a Dockerfile was not updated since the last report was generated, the command skips the discovery of packages from that Dockerfile. The same scenario applies to other manifest files such as the `package-lock.json` file.                                                                                                                                                                                |
+| `-p`, `--prev-report`                  | Optional             | Use the previous BOM report to speed up the command. For example, if a Dockerfile was not updated since the last report was generated, the command skips the discovery of packages from that Dockerfile. The same scenario applies to other manifest files such as the `package-lock.json` file.                                                                                                                                                                                |
+| `-o`, `--output`                       | Optional             | Select the BOM report format. You can generate the format output in either Standard BOM format (`standard`) or CycloneDX's SBOM format (`cyclonedx`). The default value is `standard`. You can store both formats by inputting each format separated by a comma with no space. |
 | `-f`, `--dockerbuildflags`             | Optional             | Customize the Docker build command for build stage scanning. Instead of using this command-line flag, you can specify the value in an environment variable named `DOCKERBUILDFLAGS`. By default, this command option is set to `''`. If you use this option, make sure that it is the last flag that is provided to the command. |
 | `-g`, `--gradle.excludeconfigurations` | Optional             | Exclude the Gradle configurations, for example: `runtimeClasspath,testCompileClasspath`. By default, this command option is set to `''`.                                                                                                                                |
 | `-m`, `--maven.excludescopes`          | Optional             | Exclude the Maven scopes, for example: `test,compile`. Example: 'test,compile'. By default, this command option is set to `''`.                                                                                                                                         |
@@ -205,6 +206,8 @@ The following table lists the options for using the `vulnerability-scan` command
 | `-c`, `--cveignore`  | Required             | The file path of the CVE Ignore file that contains the list of CVEs to ignore.                                      |
 | `-e`, `--excludedev` | Optional             | Specifies that you do not want the command to report CVEs for development dependencies.                                     |
 | `-r`, `--report`     | Optional             | The path to the generated report.                                          |
+| `-o`, `--output`     | Optional             | Selects the CVE report format. You can generate the format output in either Standard CVE format (`standard`) or CycloneDX's VEX format (`cyclonedx`). The default value is `standard`.
+|
 | `-s`, `--strict`     | Optional             | Results in command failure (exit status 2) when vulnerabilities are found. |
 {: caption="Table 3. Command options for performing a vulnerability scan." caption-side="top"}
 
