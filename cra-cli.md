@@ -2,7 +2,7 @@
  
 copyright:
   years: 2021, 2022
-lastupdated: "2022-04-26"
+lastupdated: "2022-04-27"
 
 subcollection: code-risk-analyzer-cli-plugin
 
@@ -141,11 +141,15 @@ The following table lists the command options that you can use to generate a BOM
 | `-r`, `--report`                       | Required             | The file name in which to store the BOM report.                                                                                                                                                                                                          |
 | `-a`, `--asset-type`                   | Optional             | The security checks to run (apps, image, os, all). By default, this option is set to `all`. The `apps` option is used to limit discovery to application packages.  The `image` option is used to limit discovery to base images that are used in Dockerfiles. The `os` option is used to limit discovery to build stages in Dockerfiles only. You can specify multiple values by using a comma to delimit the values, such as `-a os,image,apps`.                                                                                                                                                                                |
 | `-p`, `--prev-report`                  | Optional             | Use the previous BOM report to speed up the command. For example, if a Dockerfile was not updated since the last report was generated, the command skips the discovery of packages from that Dockerfile. The same scenario applies to other manifest files such as the `package-lock.json` file.                                                                                                                                                                                |
+| `-c`, `--dockerbuildcontext`           | Optional             | If specified, CRA uses the directory in the path parameter as the Docker build context during build stage scanning. |
 | `-o`, `--output`                       | Optional             | Select the BOM report format. You can generate the format output in either Standard BOM format (`standard`) or CycloneDX's SBOM format (`cyclonedx`). The default value is `standard`. You can store both formats by inputting each format separated by a comma with no space. |
 | `-f`, `--dockerbuildflags`             | Optional             | Customize the Docker build command for build stage scanning. Instead of using this command-line flag, you can specify the value in an environment variable named `DOCKERBUILDFLAGS`. By default, this command option is set to `''`. If you use this option, make sure that it is the last flag that is provided to the command. |
+| `-d`, `--dockerfilepattern`            | Optional             | The pattern to identify the Dockerfile in the repo.  |
 | `-g`, `--gradle.excludeconfigurations` | Optional             | Exclude the Gradle configurations, for example: `runtimeClasspath,testCompileClasspath`. By default, this command option is set to `''`.                                                                                                                                |
 | `-m`, `--maven.excludescopes`          | Optional             | Exclude the Maven scopes, for example: `test,compile`. Example: 'test,compile'. By default, this command option is set to `''`.                                                                                                                                         |
 | `-n`, `--nodejs.createpackagelock`     | Optional             | Enable the task to build the package-lock.json file for node.js projects.                                                                                                                                                                                |
+| `--region`                             | Optional             | The `ibmcloud` region where the toolchain is located.                                                      |
+|  `--toolchainid`                       | Optional             | The target toolchain ID to use.                                                      |
 | `-v`, `--verbose`                      | Optional             | Enable verbose log messages.                                                                                                                                                                                                                             |
 {: caption="Table 2. Command options for generating a BOM file" caption-side="top"}
 
@@ -179,7 +183,7 @@ Dockerfile
 The following code snippets show how to use the `bom-generate` command:
 
 ```sh
-ibmcloud cra bom-generate --path PATH --report REPORT [--asset-type ASSET-TYPE] [--prev-report PREV-REPORT] [--dockerbuildflags DOCKERBUILDFLAGS] [--gradle.excludeconfigurations GRADLE.EXCLUDECONFIGURATIONS] [--maven.excludescopes MAVEN.EXCLUDESCOPES] [--nodejs.createpackagelock] [--verbose]
+ibmcloud cra bom-generate --path PATH --report REPORT [--asset-type ASSET-TYPE] [--dockerbuildcontext] [--dockerbuildflags DOCKERBUILDFLAGS] [--dockerfilepattern DOCKERFILEPATTERN] [--gradle.excludeconfigurations GRADLE.EXCLUDECONFIGURATIONS] [--maven.excludescopes MAVEN.EXCLUDESCOPES] [--nodejs.createpackagelock] [--prev-report PREV-REPORT] [--region REGION] [--toolchainid TOOLCHAINID] [--verbose]
 ```
 
 ```sh
@@ -1021,7 +1025,6 @@ For more information about the dependent utility commands that are required by t
 |cra-gradle-exclude-configs     |text   |Specifies which Gradle configurations to exclude dependencies from in scanning. For example, `runtimeClasspath,testCompileClasspath`. This parameter is empty by default.   |Optional   |
 |cra-maven-exclude-scopes       |text   |Specifies which Maven scopes to exclude dependencies from in scanning. For example, `test,compile`. This parameter is empty by default.  |Optional   |
 |cra-nodejs-create-package-lock		|text		|Enables Code Risk Analyzer discovery to build the `package-lock.json` file for node.js repos. This parameter is set to `false` by default.	|Optional			|
-|cra-python-create-requirements-txt		|text		|Deprecated. The new Code Risk Analyzer tools don't use this parameter. Enable Code Risk Analyzer discovery to build the `requirements.txt` file for Python repos. This parameter is set to `false` by default.	|Optional			|
 |ibmcloud-api-key		|SECRET		|The {{site.data.keyword.cloud}} API key that interacts with the `ibmcloud` CLI tool.	|Required			|
 |pipeline-dockerconfigjson		|SECRET		|The base64-encoded Docker `config.json` file that pulls images from a private registry.	|Optional			|
 |onepipeline-dockerconfigjson		|SECRET		|Deprecated. The base64-encoded Docker `config.json` file that pulls images from a private registry.	|Optional			|
