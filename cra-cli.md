@@ -2,7 +2,7 @@
  
 copyright:
   years: 2021, 2022
-lastupdated: "2022-04-27"
+lastupdated: "2022-05-25"
 
 subcollection: code-risk-analyzer-cli-plugin
 
@@ -237,7 +237,7 @@ The following properties are supported for each entry in the `.cveignore` file:
 * **cve** - The vulnerability to omit. The value of this property is either a CVE ID or a Snyk ID.
 * **alwaysOmit** - If this property is set to `true`, the vulnerability is omitted until it is changed. This property takes precedence over other property values.
 * **untilRemediationAvailable** - If this property is set to `true`, the vulnerability is omitted  until a remediation path is available. If a remediation becomes available, the vulnerability is not omitted and a message is displayed. This property takes precedence over the expiration property value.
-* **expiration** - If this property is set to `true` and the expiration date is not reached, the vulnerability is omitted. If the expiration date is reached, the vulnerability is not omitted and a message is displayed. 
+* **expiration** - If this property is set to `true` and the expiration date is not reached, the vulnerability is omitted. If the expiration date is reached, the vulnerability is not omitted and a message is displayed. Use the RFC3339 time format (`yyyy-MM-ddTHH:mm:ss[+-]Z`) to define this property.
  
 The Code Risk Analyzer uses only these defined properties. You can add properties with no effect on functions. If a vulnerability that is defined in the `.cveignore` is not omitted, a log is generated that explains the reason. If a vulnerability that is defined in the `.cveignore` file is omitted, no individual logging is displayed. The number of omissions and a list of the vulnerability IDs, with the package name, that are omitted are logged after a report is completed.
 
