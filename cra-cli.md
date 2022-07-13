@@ -1173,4 +1173,4 @@ Make sure that you are authenticated with the registry where the base image resi
 
 * Verify that the Dockerfile does not have any issues by running the  `docker build` command and making sure that it passes.  
 * If your Dockerfile requires ARG to be passed, make sure that the ARG is set as an environment variable. You can also use the `DOCKERBUILDFLAG` environment variable.
-* Authenticate with the registry that contains the base images.
+* Authenticate with the registry that contains the base images. 
