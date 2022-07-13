@@ -2,7 +2,7 @@
  
 copyright:
   years: 2021, 2022
-lastupdated: "2022-06-24"
+lastupdated: "2022-07-13"
 
 subcollection: code-risk-analyzer-cli-plugin
 
@@ -213,7 +213,7 @@ The following table lists the options for using the `vulnerability-scan` command
 | `-r`, `--report`     | Optional             | The path to the generated report.                                          |
 | `-o`, `--output`     | Optional             | Selects the CVE report format. You can generate the format output in either Standard CVE format (`standard`) or CycloneDX's VEX format (`cyclonedx`). The default value is `standard`. |
 | `-s`, `--strict`     | Optional             | Results in command failure (exit status 2) when vulnerabilities are found. |
-{: caption="Table 3. Command options for performing a vulnerability scan." caption-side="top"}
+{: caption="Table 3. Command options for performing a vulnerability scan" caption-side="top"}
 
 ### Ignoring vulnerabilities
 {: #cra-omit-vulnerabilities}
@@ -278,11 +278,36 @@ ibmcloud cra cve --bom ./bom-file.json --cveignore ./cveignore-example.json --re
 ## Deployment
 {: #deployment-command}
 
-The `deployment-analyze` command runs configuration checks on Kubernetes deployment manifests. Risk assessments are also provided for each control failure.
+The `deployment-analyze` command runs configuration checks on Kubernetes deployment manifests.
 
 ```sh
 ibmcloud cra deployment-analyze
 ```
+
+This command provides prescriptive guidance for establishing a secure configuration posture for Docker containers. The Code Risk Analyzer uses these security configurations as a point of reference and identifies security controls to check in deployment artifacts, such as `.yaml` files, for Kubernetes applications. This command also provides risk assessments for each control failure.
+
+The following table lists the controls that you can implement within DevSecOps, as identified from CIS Docker 1.13.0. More controls are added based on open source references of the [Kubernetes Common Configuration Scoring System (KCCSS)](https://github.com/octarinesec/kccss){: external}.
+
+
+|ID | Rule | Risk |
+|---------|---------|:----------:|
+| 5.3| Ensure that containers do not have the `CAP_SYS_ADMIN` capability. | High|
+| 5.3| Ensure that containers do not have the `CAP_NET_RAW` capability. | High|
+| 5.4| Ensure that privileged containers are not used. | High|
+| 5.5| Ensure that sensitive host system directories are not mounted on containers. | Medium|
+| 5.7| Ensure that privileged ports are not mapped within containers. | Low|
+| 5.9| Ensure that the host's network namespace is not shared. | Medium|
+| 5.10| Ensure that the memory usage for the container is limited. | Medium|
+| 5.11| Ensure that the appropriate CPU priority is set on the container. | Medium|
+| 5.12| Ensure that the container's root file system is mounted as read-only. | Medium|
+| 5.15| Ensure that the host's process namespace is not shared. | Medium|
+| 5.16| Ensure that the host's IPC namespace is not shared. | Medium|
+| 5.31| Ensure that the Docker socket is not mounted inside any containers. | High|
+| -| Ensure that containers do not allow unsafe allocation of CPU resources. | Medium|
+| -| Ensure that containers do not allow privilege escalation. | Medium|
+| -| Ensure that containers do not expose unsafe parts of `/proc`. | Medium|
+| -| Ensure that containers are not exposed through a shared host port. | Medium|
+{: caption="Table 4. Security controls" caption-side="top"}
 
 ### Deployment command options 
 {: #deployment-options}
@@ -295,7 +320,7 @@ The following table lists the command options that you can use for the `deployme
 | `-r`, `--report`     | Required             | The file name in which to create the report.                                        |
 | `-f`, `--fileignore` | Optional             | The file path of the `.fileignore` file.                                            |
 | `-s`, `--strict`     | Optional             | The results of the command failure (exit status 2) when deployment risks are found. |
-{: caption="Table 4. Command options for deployment analysis." caption-side="top"}
+{: caption="Table 5. Command options for deployment analysis." caption-side="top"}
 
 ### Example
 {: #deployment-example}
@@ -334,7 +359,7 @@ The following table lists the options that you can use for the `terraform-valida
 | `-q`, `--quiet`       | Optional             | Displays only summarized information.                                                                                                     |
 | `-s`, `--strict`      | Optional             | Results in command failure (exit status 2) if policies fail.                                                                              |
 | `-v`, `--verbose`     | Optional             | Displays the list of passing SCC Goals after the list of failed SCC goals.                                                                |
-{: caption="Table 5. Command options for performing Terraform analysis." caption-side="top"}
+{: caption="Table 6. Command options for performing Terraform analysis." caption-side="top"}
 
 ### Example
 {: #terraform-example}
@@ -1030,7 +1055,7 @@ For more information about the dependent utility commands that are required by t
 |pipeline-dockerconfigjson		|SECRET		|The base64-encoded Docker `config.json` file that pulls images from a private registry.	|Optional			|
 |onepipeline-dockerconfigjson		|SECRET		|Deprecated. The base64-encoded Docker `config.json` file that pulls images from a private registry.	|Optional			|
 |pipeline-debug		|select		|The pipeline debug mode switch.	|Optional			|
-{: caption="Table 6. DevSecOps Code Risk Analyzer-based parameters" caption-side="top"}
+{: caption="Table 7. DevSecOps Code Risk Analyzer-based parameters" caption-side="top"}
 
 ### Example custom scripts for DevSecOps
 {: #devsecops-custom-script-examples}
