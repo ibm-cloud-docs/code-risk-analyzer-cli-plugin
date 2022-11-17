@@ -2,7 +2,7 @@
  
 copyright:
   years: 2021, 2022
-lastupdated: "2022-07-13"
+lastupdated: "2022-11-17"
 
 subcollection: code-risk-analyzer-cli-plugin
 
@@ -10,12 +10,7 @@ keywords: code risk analyzer, cli, code risk analyzer command line, code risk an
 
 ---
 
-{:shortdesc: .shortdesc}
-{:external: target="_blank" .external}
-{:codeblock: .codeblock}
-{:pre: .pre}
-{:screen: .screen}
-{:tip: .tip}
+{{site.data.keyword.attribute-definition-list}}
 
 # Code Risk Analyzer plug-in for {{site.data.keyword.cloud_notm}}
 {: #cra-cli-plugin}
@@ -146,6 +141,7 @@ The following table lists the command options that you can use to generate a BOM
 | `-f`, `--dockerbuildflags`             | Optional             | Customize the Docker build command for build stage scanning. Instead of using this command-line flag, you can specify the value in an environment variable named `DOCKERBUILDFLAGS`. By default, this command option is set to `''`. If you use this option, make sure that it is the last flag that is provided to the command. |
 | `-d`, `--dockerfilepattern`            | Optional             | The pattern to identify the Dockerfile in the repo.  |
 | `-g`, `--gradle.excludeconfigurations` | Optional             | Exclude the Gradle configurations, for example: `runtimeClasspath,testCompileClasspath`. By default, this command option is set to `''`.                                                                                                                                |
+| `-l`, `--gradleprops` | Optional             | Customize the Gradle command with properties for Gradle dependency scanning. |                                                                                                                                |
 | `-m`, `--maven.excludescopes`          | Optional             | Exclude the Maven scopes, for example: `test,compile`. Example: 'test,compile'. By default, this command option is set to `''`.                                                                                                                                         |
 | `-n`, `--nodejs.createpackagelock`     | Optional             | Enable the task to build the package-lock.json file for node.js projects.                                                                                                                                                                                |
 | `--region`                             | Optional             | The `ibmcloud` region where the toolchain is located.                                                      |
@@ -1173,4 +1169,4 @@ Make sure that you are authenticated with the registry where the base image resi
 
 * Verify that the Dockerfile does not have any issues by running the  `docker build` command and making sure that it passes.  
 * If your Dockerfile requires ARG to be passed, make sure that the ARG is set as an environment variable. You can also use the `DOCKERBUILDFLAG` environment variable.
-* Authenticate with the registry that contains the base images. 
+* Authenticate with the registry that contains the base images.
