@@ -1022,6 +1022,9 @@ The Terraform Analyzer supports the following {{site.data.keyword.compliance_sho
 ## NetworkPolicy analysis
 {: #netpol-analyze-command}
 
+This feature is in Beta state. Your feedback will be much appreciated!
+{: note}
+
 The `netpol-analyze` command runs configuration checks on Kubernetes and Calico NetworkPolicy manifests.
 
 ```sh
@@ -1064,6 +1067,13 @@ ibmcloud cra netpol-analyze --path PATH --report REPORT [--connectivity CONNFILE
 ```sh
 ibmcloud cra np --path ./sampleDir --report netpol-report.json --strict
 ```
+
+### Network config analyzer image
+The `netpol-analyze` command runs under the hood IBM's [Network Config Analyzer (NCA)](https://github.com/IBM/network-config-analyzer). 
+The command runs NCA as a Docker image, hence [docker](https://www.docker.com/) must be installed on your machine.
+If not already in your local registry, the command pulls the analyzer image from the global IBM Cloud® Container Registry.
+It pulls the most recent analyzer image that includes fixes for any vulnerability found.
+The image URL for the network policy analyzer is `icr.io/continuous-delivery/cra/nca`.
 
 ## Using Code Risk Analyzer in Tekton pipelines
 {: #cra-tekton-pipelines}
