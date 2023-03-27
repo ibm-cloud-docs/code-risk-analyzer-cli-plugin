@@ -2,8 +2,6 @@
 toc:
   properties:
     subcollection: code-risk-analyzer-cli-plugin
-    version: 2
-    category: platform_services
     audience: platform
     href: /docs/code-risk-analyzer-cli-plugin
     console-page: "/devops/getting-started"
