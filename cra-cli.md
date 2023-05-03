@@ -1,8 +1,8 @@
 ---
  
 copyright:
-  years: 2021, 2022
-lastupdated: "2022-12-15"
+  years: 2021, 2023
+lastupdated: "2023-05-02"
 
 subcollection: code-risk-analyzer-cli-plugin
 
@@ -21,7 +21,7 @@ The {{site.data.keyword.cloud}} command-line interface (CLI) provides code risk 
 You can use the CLI to complete the following tasks:
 
 * Generate a Bill of Materials (BOM) file that lists the dependencies and available license information of all third-party OS packages and application packages. You can also generate this output in CycloneDX-specific format.
-* Discover vulnerabilities in packages that are listed in the BOM file. You can also view the generated report in CycloneDX-specific format, or use vulnerability auto-remediation for Node.js applications.
+* Discover vulnerabilities in packages that are listed in the BOM file. You can also view the generated report in CycloneDX-specific format, or use vulnerability auto-remediation for Node.js, Maven, or Gradle applications.
 * Analyze a Terraform plan for compliance with certain rules.
 * Analyze Kubernetes files for compliance with certain rules.
 
@@ -32,7 +32,7 @@ Code Risk Analyzer supports the Java&trade;, Node.js, Python, and Go languages. 
 
 |Content |Description	|
 |:----------|:------------------------------|
-|Java		|The repo must use Maven or Gradle. For Maven, dependencies are computed by using the `pom.xml` file. For Gradle, dependencies are computed by using the `Build.gradle` file.		|
+|Java		|The repo must use Maven or Gradle. For Maven, dependencies are computed by using the `pom.xml` file. For Gradle, dependencies are computed by using the `Build.gradle` file. Code Risk Analyzer can also perform auto-remediation for both Maven and Gradle. 		|
 |Node.js		|Dependencies are computed by using the `package-lock.json` file. For Node.js, Code Risk analyzer can also perform auto-remediation. Make sure that the installed version of npm matches the project npm version.		|
 |Python		|Dependencies are computed by using the `requirements.txt` file.		|
 |Golang		|Supports `go mod` and `go dep` dependency management. For `go mod`, the `go.sum` file must be in the repo. For `go dep`, the `Gopkg.lock` file must be in the repo.		|
@@ -1111,6 +1111,9 @@ For more information about the dependent utility commands that are required by t
 |pipeline-dockerconfigjson		|SECRET		|The base64-encoded Docker `config.json` file that pulls images from a private registry.	|Optional			|
 |onepipeline-dockerconfigjson		|SECRET		|Deprecated. The base64-encoded Docker `config.json` file that pulls images from a private registry.	|Optional			|
 |pipeline-debug		|select		|The pipeline debug mode switch.	|Optional			|
+|opt-in-cra-auto-remediation		|text		|Enables Code Risk Analyzer to run the `cra auto remediation` command (`true` or `false`). The default value is `false`. This command is supported only in the Continuous Compliance Pipeline.	|Optional			|
+|opt-in-cra-auto-remediation-enabled-repos		|text		|Specifies the list of comma-separated repository names to enable for the `cra auto remediation` command. This parameter is considered only if `opt-in-cra-auto-remediation` is set to `true` and is supported only in the Continuous Compliance Pipeline.	|Optional			|
+|opt-in-cra-auto-remediation-force		|text		|Forces the `cra auto remediation` command to update the packages even if the major version is different from the current vulnerable package version (`true` or `false`). This parameter is considered only if `opt-in-cra-auto-remediation` is set to `true` and is supported only in the Continuous Compliance Pipeline.	|Optional			|
 {: caption="Table 8. DevSecOps Code Risk Analyzer-based parameters" caption-side="top"}
 
 ### Example custom scripts for DevSecOps
