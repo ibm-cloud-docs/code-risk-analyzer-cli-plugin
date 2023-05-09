@@ -2,7 +2,7 @@
  
 copyright:
   years: 2021, 2023
-lastupdated: "2023-05-02"
+lastupdated: "2023-05-05"
 
 subcollection: code-risk-analyzer-cli-plugin
 
@@ -358,10 +358,12 @@ The following table lists the options that you can use for the `terraform-valida
 | --------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | `-r`, `--report`      | Required             | The path to the generated report.                                                                                                         |
 | `-t`, `--tf-plan`     | Required             | The path to the input Terraform plan file.                                                                                                      |
-| `-p`, `--policy-file` | Optional             | The path to the policy profile file. This file must contain `scc_goals` and `scc_goal_parameters` that overwrite default SCC values. The policy profile JSON file can also contain comments without quoted values. The file can also contain the `.jsonc` file extension for JSON profiles with comments. |
+| `-p`, `--policy-file` | Optional             | The filepath to the policy profile. This flag accepts an SCC V2 profile, a custom JSON file with a set of SCC goals, or a custom JSON file with a set of SCC rules. |
 | `-q`, `--quiet`       | Optional             | Displays only summarized information.                                                                                                     |
 | `-s`, `--strict`      | Optional             | Results in command failure (exit status 2) if policies fail.                                                                              |
 | `-v`, `--verbose`     | Optional             | Displays the list of passing SCC Goals after the list of failed SCC goals.                                                                |
+| `--sccv2`     | Optional             | This flag indicates that when an SCC profile is not specified, the Code Risk Analyzer validates against SCC rules instead of SCC goals. |
+| `-a`, `--attachment-file`     | Optional             | This flag accepts a file that has JSON for SCC V2 attachments. To use this flag, an SCC V2 profile must be specified with the `-p` flag. |
 {: caption="Table 6. Command options for performing Terraform analysis" caption-side="top"}
 
 ### Example
@@ -370,11 +372,11 @@ The following table lists the options that you can use for the `terraform-valida
 The following code snippets show how to use the `terraform-validate` command:
 
 ```sh
-ibmcloud cra terraform-validate --tf-plan TFPLANFILE --report REPORT [--policy-file POLICYFILE] [--strict] [--quiet] [--verbose]
+ibmcloud cra terraform-validate --tf-plan TFPLANFILE --report REPORT [--format FORMAT] [--policy-file POLICYFILE] [--quiet] [--region REGION] [--state-file STATEFILE] [--strict] [--toolchainid TOOLCHAINID] [--verbose] [--sccv2] [--attachment-file ATTACHMENT_FILE]
 ```
 
 ```sh
-ibmcloud cra tf -r report-user-rofile.json -t ./tfplan.json  -p ./user-profile.json --verbose
+ibmcloud cra tf -r report-user-profile.json -t ./tfplan.json  -p ./user-profile.json --verbose
 ```
 
 #### Example Terraform plan file for the `terraform-validate` command
@@ -782,7 +784,7 @@ ibmcloud cra tf -r report-user-rofile.json -t ./tfplan.json  -p ./user-profile.j
 ```
 
 
-#### Example profile file for the `terraform-validate` command
+#### Example SCC V1 profile file for the `terraform-validate` command
 {: #terraform-example-profile}
 
 ```text
@@ -812,217 +814,541 @@ ibmcloud cra tf -r report-user-rofile.json -t ./tfplan.json  -p ./user-profile.j
 }
 ```
 
+#### Example SCC V2 profile file schema for the `terraform-validate` command
+{: #terraform-example-v2-profile}
+
+```text
+{	
+	"title": "User Profile Standard v2 Schema",
+	"type": "object",
+	"properties": {
+		"id": {
+			"type": "string"
+		},
+		"profile_name": {
+			"type": "string"
+		},
+		"profile_version": {
+			"type": "string"
+		},
+		"controls": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"control_specifications": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"assessment_count": {
+									"type": "number"
+								},
+								"assessments": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"assessment_type": {
+												"type": "string"
+											},
+											"assessment_method": {
+												"type": "string"
+											},
+											"assessment_description": {
+												"type": "string"
+											},
+											"assessment_id": {
+												"type": "string"
+											},
+											"parameter_count": {
+												"type": "number"
+											},
+											"parameters": {
+												"type": "array",
+												"items": {
+													"type": "object",
+													"properties": {
+														"parameter_name": {
+															"type": "string"
+														},
+														"parameter_display_name": {
+															"type": "string"
+														},
+														"parameter_type": {
+															"type": "string"
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"default_parameters": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"assessment_type":  {
+						"type": "string"
+					},
+					"assessment_id": {
+						"type": "string"
+					},
+					"parameter_name": {
+						"type": "string"
+					},
+					"parameter_default_value": {
+						"type": "string"
+					},
+					"parameter_display_name": {
+						"type": "string"
+					},
+					"parameter_type": {
+						"type": "string"
+					}
+				}
+			}
+		}
+	},
+	"required": ["default_parameters", "controls", "profile_name", "profile_version"]
+```
+
+#### Example SCC V2 classic profile file for the `terraform-validate` command
+{: #terraform-example-v2-classicprofile}
+
+You can prefix the rule ID with `rule-`.
+{: tip}
+
+```text
+{
+  "schema_version": "2.0",
+  "scc_rules": [
+    {
+      "scc_rule_id": "548a3321-6a39-400c-9c2d-0df9a13afd02"
+    },
+    {
+      "scc_rule_id": "726ec899-505e-4de9-ac1b-9578ef62f89f"
+    },
+    {
+      "scc_rule_id": "962e2bde-2a4f-4e07-a352-ce17708b1e85"
+    },
+    {
+      "scc_rule_id": "9653d2c7-6290-4128-a5a3-65487ba40370"
+    },
+    {
+      "scc_rule_id": "d8d13c3e-5ca0-46c5-a055-2475852c4ec6"
+    },
+    {
+      "scc_rule_id": "0f7e7e60-a05c-43a7-be74-70615f14a342"
+    },
+    {
+      "scc_rule_id": "979fd713-d39f-4efe-ba02-bf6fc07e57bb"
+    },
+    {
+      "scc_rule_id": "rule-e76a3a81-b0d0-41fc-947d-13dc9cfff379"
+    },
+    {
+      "scc_rule_id": "caf5e45d-ccc8-4e35-b124-e1b4c8bcab71"
+    },
+    {
+      "scc_rule_id": "rule-1edc74ae-0dad-4ea1-865d-89e3214d240f"
+    },
+    {
+      "scc_rule_id": "064d9004-8728-4988-b19a-1805710466f6"
+    },
+    {
+      "scc_rule_id": "rule-caf5e45d-ccc8-4e35-b124-e1b4c8bcab71"
+    }
+  ],
+  "scc_parameters": {
+    "ibm_minimum_password_length": 12,
+    "ibm_password_reuse_prevention": 4,
+    "allowed_admins_per_account": "10",
+    "api_keys_rotated_days": 90,
+    "account_owner_last_login_days": 30,
+    "no_of_admins_for_iam": 3,
+    "no_of_service_id_admins_for_iam": 3,
+    "no_of_managers_for_iam": 0,
+    "no_of_service_id_managers_for_iam": 0,
+    "iam_service_ids_max_count": 3,
+    "ssh_port": 25,
+    "rdp_port": 3390,
+    "no_pre_shared_key_characters": 30,
+    "dns_port": 60,
+    "vm_nic_count": 1,
+    "no_of_admins_for_container_registry ": 3,
+    "no_of_service_id_admins_for_container_registry": 3,
+    "no_of_managers_for_container_registry": 0,
+    "no_of_service_id_managers_for_container_registry": 0,
+    "access_tokens_expire": 120
+  }
+}
+```
+
 ### {{site.data.keyword.compliance_short}} goals
 {: #terraform-scc-goals}
 
 The Terraform Analyzer supports the following {{site.data.keyword.compliance_short}} goals:
 
 ```text
-3000001 - Ensure IBMid password policy requires at least one uppercase letter
-3000002 - Ensure IBMid password policy requires at least one lowercase letter
-3000003 - Ensure IBMid password policy requires at least one number
-3000004 - Ensure IBMid password policy requires minimum length of 12 characters
-3000005 - Ensure IBMid password policy prevents password reuse below the minimum of #
-3000006 - Ensure IBMid password contains only printable ASCII characters (in the range 33 - 126)
-3000007 - Ensure IBMid password password doesn't contain spaces or any of following characters: ;:(?)<>"
-3000008 - Ensure the usage of a password meter that coaches users to create stronger passwords
-3000009 - Ensure IAM roles are used to create IAM policies for IBM resources
-3000010 - Ensure a support role has been assigned in IAM to manage cases in the IBM Cloud Support Center
-3000011 - Ensure that IBM Cloud API keys are not created during the initial setup of IAM users
-3000015 - Ensure IAM users are attached to access groups
-3000016 - Ensure IAM policies for users are attached only to groups or roles
-3000030 - Ensure IAM policies for service IDs are attached only to groups or roles
-3000017 - Ensure multifactor authentication (MFA) is enabled at the account level
-3000021 - Ensure there are no more than # IAM administrators configured per account
-3000027 - Ensure permissions for API key creation are limited and configured in IAM settings
-3000022 - Ensure Cloud Object Storage public access is disabled in IAM settings (not applicable to ACLs managed using S3 APIs)
-3000028 - Ensure permissions for service ID creation are limited and configured in IAM settings
-3000029 - Ensure IAM-enabled services have no more than # users with the IAM administrator role
+3000001 - Check whether IBMid password policy requires at least one uppercase letter
+3000002 - Check whether IBMid password policy requires at least one lowercase letter
+3000003 - Check whether IBMid password policy requires at least one number
+3000004 - Check whether IBMid password policy requires minimum length of 12 characters
+3000005 - Check whether IBMid password policy prevents password reuse below the minimum of #
+3000006 - Check whether IBMid password may contain only printable ASCII characters (in the range 33 - 126)
+3000007 - Check whether IBMid password policy contains spaces or any of the following characters: \;:(""?)<>"
+3000008 - Check whether IBMid uses a password meter that coaches users to create strong passwords that exceed the minimum requirements
+3000009 - Check whether IAM roles are used to create IAM policies for IBM resources
+3000010 - Check whether a support role has been assigned in IAM to manage cases in the IBM Cloud Support Center
+3000011 - Check whether API keys are not created in IAM during the initial setup of IAM users
+3000015 - Check whether IAM users are attached to at least one access group
+3000016 - Check whether IAM policies for users are attached only to groups or roles
+3000030 - Check whether IAM policies for service IDs are attached only to groups or roles
+3000017 - Check whether multifactor authentication (MFA) is enabled at the account level
+3000021 - Check whether there are no more than # IAM administrators configured per account
+3000027 - Check whether permissions for API key creation are limited and configured in IAM settings for the account owner
+3000022 - Check whether Cloud Object Storage public access is disabled in IAM settings (not applicable to ACLs managed using S3 APIs)
+3000028 - Check whether permissions for service ID creation are limited and configured in IAM settings for the account owner
+3000029 - Check whether IAM-enabled services have no more than # users with the IAM administrator role
 3000031 - Check whether Identity and Access Management (IAM) is enabled with audit logging
-3000032 - Ensure IAM-enabled services have no more than # service IDs with the IAM administrator role
-3000033 - Ensure IAM-enabled services have at least # users with the IAM manager role
+3000032 - Check whether IAM-enabled services have no more than # service IDs with the IAM administrator role
+3000033 - Check whether Hyper Protect Crypto Services have at least # users with the IAM manager role
 3000038 - Check whether account has no more than # service IDs with admin privileges
-3000034 - Ensure IAM-enabled services have at least # service IDs with the IAM manager role
-3000035 - Ensure account access is managed only by IAM access groups
-3000101 - Ensure Cloud Object Storage is enabled with encryption
-3000102 - Ensure Cloud Object Storage is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
-3000229 - Ensure Certificate Manager certificates that are generated by the service are renewed automatically before they expire
+3000034 - Check whether Hyper Protect Crypto Services have at least # service IDs with the IAM manager role
+3000035 - Check whether account service access is managed only by IAM access groups
+3000041 - Check whether Cloud Shell is enabled in account settings
+3000101 - Check whether Cloud Object Storage is enabled with encryption
+3000102 - Check whether Cloud Object Storage is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
+3000229 - Check whether Certificate Manager certificates that are generated by the service are renewed automatically before they expire
 3000103 - Check whether Cloud Object Storage is accessible only through HTTPS
-3000104 - Ensure Cloudant is accessible only through HTTPS
-3000105 - Ensure Cloud Object Storage is accessible only through private endpoints
-3000106 - Ensure Cloud Object Storage bucket access is restricted by using IAM and S3 access control
-3000107 - Ensure Cloud Object Storage network access is restricted to a specific IP range
-3000108 - Ensure Cloud Object Storage is enabled with customer-managed encryption and Keep Your Own Key (KYOK)
-3000201 - Ensure Databases for MongoDB is enabled with encryption
-3000202 - Ensure Databases for MongoDB is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
-3000203 - Ensure Databases for MongoDB is accessible only through HTTPS
-3000204 - Ensure Databases for MongoDB is accessible only through private endpoints
-3000206 - Ensure Databases for Redis is enabled with encryption
-3000207 - Ensure Databases for Redis is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
-3000208 - Ensure Databases for Redis is accessible only through HTTPS
-3000209 - Ensure Databases for Redis is accessible only through private endpoints
-3000211 - Ensure Databases for Elasticsearch encryption is enabled
-3000212 - Ensure Databases for Elasticsearch encryption is enabled with BYOK
-3000213 - Ensure Databases for Elasticsearch is accessible only through HTTPS
-3000214 - Ensure Databases for Elasticsearch is accessible only through private endpoints
-3000216 - Ensure Databases for etcd is enabled with encryption
-3000217 - Ensure Databases for etcd is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
-3000218 - Ensure Databases for etcd is accessible only through HTTPS
-3000219 - Ensure Databases for etcd is accessible only through private endpoints
-3000221 - Ensure Databases for PostgreSQL is enabled with encryption
-3000222 - Ensure Databases for PostgreSQL is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
-3000223 - Ensure Databases for PostgreSQL is accessible only through HTTPS
-3000224 - Ensure Databases for PostgreSQL is accessible only through private endpoints
-3000205 - Ensure network access for MongoDB is restricted to specific IP range
-3000210 - Ensure Databases for Redis network access is restricted to specific IP range
-3000215 - Ensure Databases for Elasticsearch network access is restricted to a specific IP range
-3000220 - Ensure Databases for etcd network access is restricted to a specific IP range
-3000225 - Ensure Databases for PostgreSQL network access is restricted to a specific IP range
-3000231 - Ensure Key Protect has high availability
-3000232 - Ensure Kubernetes Service is configured with role-based access control (RBAC)
-3000233 - Ensure Hyper Protect Crypto Services instance has at least # crypto units
-3000234 - Ensure Hyper Protect Crypto Services instance is enabled with a dual authorization deletion policy
+3000104 - Check whether Cloudant is accessible only through HTTPS
+3000105 - Check whether Cloud Object Storage is accessible only by using private endpoints
+3000106 - Check whether Cloud Object Storage bucket access is restricted by using IAM and S3 access control
+3000107 - Check whether Cloud Object Storage network access is restricted to a specific IP range
+3000108 - Check whether Cloud Object Storage is enabled with customer-managed encryption and Keep Your Own Key (KYOK)
+3000201 - Check whether Databases for MongoDB is enabled with encryption
+3000202 - Check whether Databases for MongoDB is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
+3000203 - Check whether Databases for MongoDB is accessible only through HTTPS
+3000204 - Check whether Databases for MongoDB is accessible only by using private endpoints
+3000206 - Check whether Databases for Redis is enabled with encryption
+3000207 - Check whether Databases for Redis is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
+3000208 - Check whether Databases for Redis is accessible only through HTTPS
+3000209 - Check whether Databases for Redis is accessible only by using private endpoints
+3000211 - Check whether Databases for Elasticsearch is enabled with encryption
+3000212 - Check whether Databases for Elasticsearch is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
+3000213 - Check whether Databases for Elasticsearch is accessible only through HTTPS
+3000214 - Check whether Databases for Elasticsearch is accessible only by using private endpoints
+3000216 - Check whether Databases for etcd is enabled with encryption
+3000217 - Check whether Databases for etcd is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
+3000218 - Check whether Databases for etcd is accessible only through HTTPS
+3000219 - Check whether Databases for etcd is accessible only by using private endpoints
+3000221 - Check whether Databases for PostgreSQL is enabled with encryption
+3000222 - Check whether Databases for PostgreSQL is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
+3000223 - Check whether Databases for PostgreSQL is accessible only through HTTPS
+3000224 - Check whether Databases for PostgreSQL is accessible only by using private endpoints
+3000205 - Check whether Databases for MongoDB network access is restricted to a specific IP range
+3000210 - Check whether Databases for Redis network access is restricted to specific IP range
+3000215 - Check whether Databases for Elasticsearch network access is restricted to a specific IP range
+3000220 - Check whether Databases for etcd network access is restricted to a specific IP range
+3000225 - Check whether Databases for PostgreSQL network access is restricted to a specific IP range
+3000231 - Check whether Key Protect has high availability
+3000232 - Check whether Kubernetes Service is configured with role-based access control (RBAC)
+3000233 - Check whether Hyper Protect Crypto Services instance has at least # crypto units
+3000234 - Check whether Hyper Protect Crypto Services instance is enabled with a dual authorization deletion policy
 3000235 - Check whether Hyper Protect Crypto Services encryption keys that are generated by the service are rotated automatically at least every # months
 3000240 - Check whether Bare Metal Servers are ordered with redundant power supplies to ensure workload protection
-3000242 - Ensure Databases for Redis has no more than # users with the IAM administrator role
-3000243 - Ensure Databases for PostreSQL has no more than # users with the IAM administrator role
-3000244 - Ensure Databases for MongoDB has no more than # users with the IAM administrator
-3000245 - Ensure Databases for Elasticsearch has no more than # users with the IAM administrator role
-3000109 - Ensure Databases for Cloudant has no more than # users with the IAM administrator role
-3000247 - Ensure Key Protect has no more than # users with the IAM administrator role
-3000246 - Ensure Databases for etcd has no more than # users with the IAM administrator role
-3000248 - Ensure Kubernetes Service has no more than # users with the IAM administrator role
-3000249 - Ensure Databases for EnterpriseDB has no more than # users with the IAM administrator role
-3000251 - Ensure Databases for Elasticsearch has no more than # service IDs with the IAM administrator role
-3000252 - Ensure Key Protect has no more than # service IDs with the IAM administrator role
-3000253 - Ensure Databases for etcd has no more than # service IDs with the IAM administrator role
-3000254 - Ensure Kubernetes Service has no more than # service IDs with the IAM administrator role
-3000255 - Ensure Databases for EnterpriseDB has no more than # service IDs with the IAM administrator role
-3000312 - Ensure Databases for MongoDB has no more than # service IDs with the IAM administrator role
-3000313 - Ensure Databases for Redis has no more than # service IDs with the IAM administrator role
-3000314 - Ensure Databases for PostgreSQL has no more than # service IDs with the IAM administrator role
-3000110 - Ensure Cloudant has no more than # service IDs with the IAM administrator role
-3000111 - Ensure Cloudant has at least # users with the IAM manager role
-3000112 - Ensure Cloudant has at least # service IDs with the IAM manager role
-3000256 - Ensure App ID has at least # users with the IAM manager role
-3000257 - Ensure App ID has at least # service IDs with the IAM manager role
-3000258 - Ensure Cloud Object Storage has at least # users with the IAM manager role
-3000259 - Ensure Cloud Object Storage has at least # service IDs with the IAM manager role
-3000260 - Ensure Event Streams has at least # users with the IAM manager role
-3000261 - Ensure Event Streams has at least # service IDs with the IAM manager role
-3000262 - Ensure schematics has at least # users with the IAM manager role
-3000263 - Ensure schematics has at least # service IDs with the IAM manager role
-3000264 - Ensure Transit Gateway has at least # users with the IAM manager role
-3000265 - Ensure Transit Gateway has at least # service IDs with the IAM manager role
-3000266 - Ensure Key Protect has at least # users with the IAM manager role
-3000267 - Ensure Key Protect has at least # service IDs with the IAM manager role
-3000268 - Ensure Kubernetes Service has at least # users with the IAM manager role
-3000269 - Ensure Kubernetes Service has at least # service IDs with the IAM manager role
-3000270 - Ensure Certificate Manager has at least # users with the IAM manager role
-3000271 - Ensure Certificate Manager has at least # service IDs with the IAM manager role
-3000113 - Ensure Cloudant access is managed only by IAM access groups
-3000272 - Ensure Databases for Redis access is managed only by IAM access groups
-3000273 - Ensure Databases for PostgreSQL access is managed only by IAM access groups
-3000274 - Ensure Databases for MongoDB access is managed only by IAM access groups
-3000275 - Ensure Databases for Elasticsearch access is managed only by IAM access groups
-3000276 - Ensure Databases for etcd access is managed only by IAM access groups
-3000277 - Ensure Key Protect access is managed only by IAM access groups
-3000278 - Ensure Kubernetes Service access is managed only by IAM access groups
-3000279 - Ensure Databases for EnterpriseDB access is managed only by IAM access groups
-3000114 - Ensure Cloud Object Storage buckets are enabled with IBM Activity Tracker
-3000115 - Ensure Cloud Object Storage buckets are enabled with IBM Cloud Monitoring
-3000116 - Ensure Cloud Object Storage bucket resiliency is set to cross region
-3000301 - Ensure IBM Activity Tracker is provisioned in multiple regions in an account
-3000302 - Ensure IBM Activity Tracker trails are integrated with LogDNA logs
-3000303 - Ensure IBM Activity Tracker logs are encrypted at rest
-3000304 - Ensure IBM Cloud Monitoring has no more than # users with the IAM administor role
-3000308 - Ensure IBM Activity Tracker has no more than # users with the IAM administrator role
-3000309 - Ensure IBM Activity Tracker has no more than # service IDs with the IAM administrator role
-3000310 - Ensure IBM Cloud Monitoring has no more than # service IDs with the IAM administrator role
-3000315 - Ensure IBM Cloud Internet Services (CIS) has at least # users with the IAM manager role
-3000316 - Ensure IBM Cloud Internet Services (CIS) has at least # service IDs with the IAM manager role
-3000317 - Ensure IBM Activity Tracker has at least # users with the IAM manager role
-3000318 - Ensure IBM Activity Tracker has at least # service IDs with the IAM manager role
-3000319 - Ensure IBM Cloud Monitoring access is managed only by IAM access groups
-3000320 - Ensure IBM Activity Tracker access is managed only by IAM access groups
-3000401 - Ensure Cloud Internet Services (CIS) has web application firewall enabled
-3000402 - Ensure Cloud Internet Services (CIS) has DDoS protection enabled
-3000403 - Ensure Cloud Internet Services (CIS) has TLS v1.2 set for all inbound traffic
-3000404 - Ensure Virtual Private Cloud (VPC) security groups have no inbound rules that specify source IP 0.0.0.0/0 to SSH port 22
-3000405 - Ensure Virtual Private Cloud (VPC) security groups have no inbound rules that specify source IP 0.0.0.0/0 to RDP ports 3389
-3000406 - Ensure Virtual Private Cloud (VPC) has no rules in the default security group
-3000408 - Ensure Flow Logs for VPC are enabled
-3000410 - Ensure Virtual Private Cloud (VPC) security groups have no inbound ports open to the internet (0.0.0.0/0)
-3000411 - Ensure Virtual Private Cloud (VPC) security groups have no outbound ports open to the internet (0.0.0.0/0)
-3000412 - Ensure all virtual server instances have at least one Virtual Private Cloud (VPC) security group attached
-3000413 - Ensure all network interfaces of a virtual server instance have at least one Virtual Private Cloud (VPC) security group attached
-3000418 - Ensure account is configured with at least one VPN
-3000419 - Ensure VPN for VPC has Internet Key Exchange (IKE) policy encryption that is not set to 'triple_des'
-3000420 - Ensure VPN for VPC has Internet Key Exchange (IKE) policy authentication that is set to 'sha256'
-3000421 - Ensure VPN for VPC has a Diffie-Hellman group set to at least group #
-3000422 - Ensure VPN for VPC has IPsec policy encryption that is not set to 'triple_des'
-3000423 - Ensure VPN for VPC has IPsec policy authentication that is set to 'sha256'
-3000424 - Ensure VPN for VPC has an IPsec policy that does not have Perfect Forward Secrecy (PFS) disabled
-3000425 - Ensure VPN for VPC authentication is configured with a strong pre-shared key with at least 24 alphanumeric characters
-3000426 - Ensure VPN for VPC has a Dead Peer Detection policy that is set to 'restart'
-3000427 - Ensure Application Load Balancer for VPC has public access disabled
-3000428 - Ensure Application Load Balancer for VPC is configured with multiple members in the pool
-3000429 - Ensure Application Load Balancer for VPC listener is configured with default pool
-3000430 - Ensure Application Load Balancer for VPC has health check configured when created
-3000431 - Ensure Application Load Balancer for VPC has a health check protocol that is either HTTP or HTTPS
-3000432 - Ensure Application Load Balancer for VPC pool uses the HTTPS protocol for HTTPS listeners
-3000433 - Ensure Application Load Balancer for VPC is configured to convert HTTP client requests to HTTPS
-3000434 - Ensure Application Load Balancer for VPC uses HTTPS (SSL & TLS) instead of HTTP
+3000242 - Check whether Databases for Redis has no more than # users with the IAM administrator role
+3000243 - Check whether Databases for PostreSQL has no more than # users with the IAM administrator role
+3000244 - Check whether Databases for MongoDB has no more than # users with the IAM administrator role
+3000245 - Check whether Databases for Elasticsearch has no more than # users with the IAM administrator role
+3000109 - Check whether Cloudant has no more than # users with the IAM administrator role
+3000247 - Check whether Key Protect has no more than # users with the IAM administrator role
+3000246 - Check whether Databases for etcd has no more than # users with the IAM administrator role
+3000248 - Check whether Kubernetes Service has no more than # users with the IAM administrator role
+3000249 - Check whether Databases for EnterpriseDB has no more than # users with the IAM administrator role
+3000251 - Check whether Databases for Elasticsearch has no more than # service IDs with the IAM administrator role
+3000252 - Check whether Key Protect has no more than # service IDs with the IAM administrator role
+3000253 - Check whether Databases for etcd has no more than # service IDs with the IAM administrator role
+3000254 - Check whether Kubernetes Service has no more than # service IDs with the IAM administrator role
+3000255 - Check whether Databases for EnterpriseDB has no more than # service IDs with the IAM administrator role
+3000312 - Check whether Databases for MongoDB has no more than # service IDs with the IAM administrator role
+3000313 - Check whether Databases for Redis has no more than # service IDs with the IAM administrator role
+3000314 - Check whether Databases for PostgreSQL has no more than # service IDs with the IAM administrator role
+3000110 - Check whether Cloudant has no more than # service IDs with the IAM administrator role
+3000111 - Check whether Cloudant has at least # users with the IAM manager role
+3000112 - Check whether Cloudant has at least # service IDs with the IAM manager role
+3000256 - Check whether App ID has at least # users with the IAM manager role
+3000257 - Check whether App ID has at least # service IDs with the IAM manager role
+3000258 - Check whether Cloud Object Storage has at least # users with the IAM manager role
+3000259 - Check whether Cloud Object Storage has at least # service IDs with the IAM manager role
+3000260 - Check whether Event Streams has at least # users with the IAM manager role
+3000261 - Check whether Event Streams has at least # service IDs with the IAM manager role
+3000262 - Check whether schematics has at least # users with the IAM manager role
+3000263 - Check whether schematics has at least # service IDs with the IAM manager role
+3000264 - Check whether Transit Gateway has at least # users with the IAM manager role
+3000265 - Check whether Transit Gateway has at least # service IDs with the IAM manager role
+3000266 - Check whether Key Protect has at least # users with the IAM manager role
+3000267 - Check whether Key Protect has at least # service IDs with the IAM manager role
+3000268 - Check whether Kubernetes Service has at least # users with the IAM manager role
+3000269 - Check whether Kubernetes Service has at least # service IDs with the IAM manager role
+3000270 - Check whether Certificate Manager has at least # users with the IAM manager role
+3000271 - Check whether Certificate Manager has at least # service IDs with the IAM manager role
+3000113 - Check whether Cloudant service access is managed only by IAM access groups
+3000272 - Check whether Databases for Redis service access is managed only by IAM access groups
+3000273 - Check whether Databases for PostgreSQL access is managed only by IAM access groups
+3000274 - Check whether Databases for MongoDB service access is managed only by IAM access groups
+3000275 - Check whether Databases for Elasticsearch service access is managed only by IAM access groups
+3000276 - Check whether Databases for etcd service access is managed only by IAM access groups
+3000277 - Check whether Key Protect service access is managed only by IAM access groups
+3000278 - Check whether Kubernetes Service access is managed only by IAM access groups
+3000279 - Check whether Databases for EnterpriseDB service access is managed only by IAM access groups
+3000114 - Check whether Cloud Object Storage buckets are enabled with IBM Activity Tracker
+3000115 - Check whether Cloud Object Storage buckets are enabled with IBM Cloud Monitoring
+3000116 - Check whether Cloud Object Storage bucket resiliency is set to cross region
+3000301 - Check whether IBM Activity Tracker is provisioned in multiple regions in an account
+3000302 - Check whether IBM Activity Tracker trails are integrated with LogDNA logs
+3000303 - Check whether IBM Activity Tracker logs are encrypted at rest
+3000304 - Check whether IBM Cloud Monitoring has no more than # users with the IAM administor role
+3000308 - Check whether IBM Activity Tracker has no more than # users with the IAM administrator role
+3000309 - Check whether IBM Activity Tracker has no more than # service IDs with the IAM administrator role
+3000310 - Check whether IBM Cloud Monitoring has no more than # service IDs with the IAM administrator role
+3000315 - Check whether IBM Cloud Internet Services (CIS) has at least # users with the IAM manager role
+3000316 - Check whether IBM Cloud Internet Services (CIS) has at least # service IDs with the IAM manager role
+3000317 - Check whether IBM Activity Tracker has at least # users with the IAM manager role
+3000318 - Check whether IBM Activity Tracker has at least # service IDs with the IAM manager role
+3000319 - Check whether IBM Cloud Monitoring service access is managed only by IAM access groups
+3000320 - Check whether IBM Activity Tracker service access is managed only by IAM access groups
+3000401 - Check whether Cloud Internet Services (CIS) has web application firewall enabled
+3000402 - Check whether Cloud Internet Services (CIS) has DDoS protection enabled
+3000403 - Check whether Cloud Internet Services (CIS) is configured with at least TLS v1.2 for all inbound traffic
+3000404 - Check whether Virtual Private Cloud (VPC) security groups have no inbound rules that specify source IP 0.0.0.0/0 to SSH port 22
+3000405 - Check whether Virtual Private Cloud (VPC) security groups have no inbound rules that specify source IP 0.0.0.0/0 to RDP ports 3389
+3000406 - Check whether Virtual Private Cloud (VPC) has no rules in the default security group
+3000407 - Check whether Virtual Private Cloud (VPC) is configured with at least TLS v1.2 for all inbound traffic through a load balancer
+3000408 - Check whether Flow Logs for VPC are enabled
+3000410 - Check whether Virtual Private Cloud (VPC) security groups have no inbound ports open to the internet (0.0.0.0/0)
+3000411 - Check whether Virtual Private Cloud (VPC) security groups have no outbound ports open to the internet (0.0.0.0/0)
+3000412 - Check whether all virtual server instances have at least one Virtual Private Cloud (VPC) security group attached
+3000413 - Check whether all network interfaces of a virtual server instance have at least one Virtual Private Cloud (VPC) security group attached
+3000419 - Check whether VPN for VPC has Internet Key Exchange (IKE) policy encryption that is not set to ""triple_des""
+3000420 - Check whether VPN for VPC has Internet Key Exchange (IKE) policy authentication that is set to minimum ""sha256""
+3000421 - Check whether VPN for VPC has a Diffie-Hellman group set to at least group #
+3000422 - Check whether VPN for VPC has IPsec policy encryption that is not set to ""triple_des""
+3000423 - Check whether VPN for VPC has IPsec policy authentication that is set to minimum ""sha256""
+3000424 - Check whether VPN for VPC has an IPsec policy that does not have Perfect Forward Secrecy (PFS) disabled
+3000425 - Check whether VPN for VPC authentication is configured with a strong pre-shared key with at least 24 alphanumeric characters
+3000426 - Check whether VPN for VPC has a Dead Peer Detection policy that is set to ""restart""
+3000427 - Check whether Application Load Balancer for VPC has public access disabled
+3000428 - Check whether Application Load Balancer for VPC is configured with multiple members in the pool
+3000429 - Check whether Application Load Balancer for VPC listener is configured with default pool
+3000430 - Check whether Application Load Balancer for VPC has health check configured when created
+3000431 - Check whether Application Load Balancer for VPC has a health check protocol that is either HTTP or HTTPS
+3000432 - Check whether Application Load Balancer for VPC pool uses the HTTPS protocol for HTTPS listeners
+3000433 - Check whether Application Load Balancer for VPC is configured to convert HTTP client requests to HTTPS
+3000434 - Check whether Application Load Balancer for VPC uses HTTPS (SSL & TLS) instead of HTTP
 3000436 - Check whether Block Storage for VPC is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
 3000437 - Check whether Block Storage for VPC is enabled with customer-managed encryption and Keep Your Own Key (KYOK)
 3000439 - Check whether data disks are encrypted with customer-managed keys
 3000440 - Check whether unattached disks are encrypted with customer-managed keys
-3000444 - Ensure Security Groups for VPC contains no outbound rules in security groups that specify source IP 8.8.8.8/32 to DNS port 53
-3000446 - Ensure Security Groups for VPC doesn't allow PING for the default security group
-3000447 - Ensure Virtual Private Cloud (VPC) classic access is disabled
-3000449 - Ensure Virtual Private Cloud (VPC) has no public gateways attached
-3000451 - Ensure Virtual Private Cloud (VPC) network access control lists don't allow ingress from 0.0.0.0/0 to any port
-3000441 - Ensure Virtual Private Cloud (VPC) network access control lists don't allow ingress from 0.0.0.0/0 to port 22
-3000442 - Ensure Virtual Private Cloud (VPC) network access control lists don't allow ingress from 0.0.0.0/0 to port 3389
-3000452 - Ensure Virtual Private Cloud (VPC) network access control lists don't allow egress from 0.0.0.0/0 to any port
-3000453 - Ensure Virtual Servers for VPC instance has the minimum # interfaces
-3000454 - Ensure Virtual Servers for VPC instance doesn't have a floating IP
-3000455 - Ensure Virtual Servers for VPC instance has all interfaces with IP-spoofing disabled
-3000456 - Ensure Virtual Servers for VPC resource group other than Default is selected
-3000457 - Ensure Virtual Servers for VPC boot volumes are enabled with customer-managed encryption and Bring Your Own Key (BYOK)
-3000458 - Ensure Virtual Servers for VPC boot volumes are enabled with customer-managed encryption and Keep Your Own Key (KYOK)
-3000459 - Ensure Virtual Servers for VPC data volumes are enabled with customer-managed encryption and Bring Your Own Key (BYOK)
-3000460 - Ensure Virtual Servers for VPC data volumes are enabled with customer-managed encryption and Keep Your Own Key (KYOK)
-3000461 - Ensure Virtual Servers for VPC is provisioned from an encrypted image
-3000462 - Ensure Virtual Servers for VPC is provisioned from customer-defined list of images
-3000463 - Ensure Virtual Servers for VPC instances are identifable by the workload they are running based on the Auto Scale for VPC instance group definition
-3000464 - Ensure Application Load Balancer for VPC has application port of the workload that is identifiable by the Auto Scale for VPC instance group definition
-3000467 - Ensure Virtual Private Cloud (VPC) has no subnet with public gateway attached
-3000469 - Ensure Application Load Balancer for VPC is configured with at least one VPC security group
-3000623 - Ensure Container Registry has no more than # users with the IAM administrator role
-3000628 - Ensure Container Registry has no more than # service IDs with the IAM administrator role
-3000635 - Ensure Container Registry has at least # users with the IAM manager role
-3000636 - Ensure Container Registry has at least # service IDs with the IAM manager role
-3000639 - Ensure Container Registry access is managed only by IAM access groups
-3000622 - Ensure Continuous Delivery has no more than # users with the IAM administrator role
-3000629 - Ensure Continuous Delivery has no more than # service IDs with the IAM administrator role
-3000633 - Ensure Continuous Delivery has at least # users with the IAM manager role
-3000634 - Ensure Continuous Delivery has at least # service IDs with the IAM manager role
-3000638 - Ensure Continuous Delivery access is managed only by IAM access groups
-3000621 - Ensure Secrets Manager has no more than # users with the IAM administrator role
-3000630 - Ensure Secrets Manager has no more than # service IDs with the IAM administrator role
-3000631 - Ensure Secrets Manager has at least # users with the IAM manager role
-3000632 - Ensure Secrets Manager has at least # service IDs with the IAM manager role
-3000637 - Ensure Secrets Manager access is managed only by IAM access groups
-3000706 - Ensure App ID user data is encrypted
-3000305 - Ensure Event Streams is accessible through public endpoints
-3000306 - Ensure Event Streams is accessible only through private endpoints
-3000307 - Ensure Event Streams network access is restricted to a specific IP range
-3000802 - Ensure Kubernetes Service is accessible only by using private endpoints
-3000804 - Ensure Kubernetes Service clusters are enabled with IBM Cloud Monitoring
-3000805 - Ensure Kubernetes Service clusters are enabled with IBM Log Analysis
-3000902 - Ensure OpenShift clusters are accessible only by using private endpoints
+3000444 - Check whether Security Groups for VPC contains no outbound rules in security groups that specify source IP 8.8.8.8/32 to DNS port 53
+3000446 - Check whether Security Groups for VPC doesn't allow PING for the default security group
+3000447 - Check whether Virtual Private Cloud (VPC) classic access is disabled
+3000449 - Check whether Virtual Private Cloud (VPC) has no public gateways attached
+3000451 - Check whether Virtual Private Cloud (VPC) network access control lists don't allow ingress from 0.0.0.0/0 to any port
+3000441 - Check whether Virtual Private Cloud (VPC) network access control lists don't allow ingress from 0.0.0.0/0 to port 22
+3000442 - Check whether Virtual Private Cloud (VPC) network access control lists don't allow ingress from 0.0.0.0/0 to port 3389
+3000452 - Check whether Virtual Private Cloud (VPC) network access control lists don't allow egress from 0.0.0.0/0 to any port
+3000453 - Check whether Virtual Servers for VPC instance has the minimum # interfaces
+3000454 - Check whether Virtual Servers for VPC instance doesn't have a floating IP
+3000455 - Check whether Virtual Servers for VPC instance has all interfaces with IP-spoofing disabled
+3000456 - Check whether Virtual Servers for VPC is in a resource group other than ""Default""
+3000457 - Check whether Virtual Servers for VPC boot volumes are enabled with customer-managed encryption and Bring Your Own Key (BYOK)
+3000458 - Check whether Virtual Servers for VPC boot volumes are enabled with customer-managed encryption and Keep Your Own Key (KYOK)
+3000459 - Check whether Virtual Servers for VPC data volumes are enabled with customer-managed encryption and Bring Your Own Key (BYOK)
+3000460 - Check whether Virtual Servers for VPC data volumes are enabled with customer-managed encryption and Keep Your Own Key (KYOK)
+3000461 - Check whether Virtual Servers for VPC is provisioned from an encrypted image
+3000462 - Check whether Virtual Servers for VPC is provisioned from customer-defined list of images
+3000463 - Check whether Virtual Servers for VPC instances are identifable by the workload they are running based on the Auto Scale for VPC instance group definition
+3000464 - Check whether Application Load Balancer for VPC has application port of the workload that is identifiable by the Auto Scale for VPC instance group definition
+3000467 - Check whether Virtual Private Cloud (VPC) has no subnet with public gateway attached
+3000469 - Check whether Application Load Balancer for VPC is configured with at least one VPC security group
+3000623 - Check whether Container Registry has no more than # users with the IAM administrator role
+3000628 - Check whether Container Registry has no more than # service IDs with the IAM administrator role
+3000635 - Check whether Container Registry has at least # users with the IAM manager role
+3000636 - Check whether Container Registry has at least # service IDs with the IAM manager role
+3000639 - Check whether Container Registry service access is managed only by IAM access groups
+3000622 - Check whether Toolchain has no more than # users with the IAM administrator role
+3000629 - Check whether Toolchain has no more than # service IDs with the IAM administrator role
+3000633 - Check whether Continuous Delivery has at least # users with the IAM manager role
+3000634 - Check whether Continuous Delivery has at least # service IDs with the IAM manager role
+3000638 - Check whether Toolchain service access is managed only by IAM access groups
+3000621 - Check whether Secrets Manager has no more than # users with the IAM administrator role
+3000630 - Check whether Secrets Manager has no more than # service IDs with the IAM administrator role
+3000631 - Check whether Secrets Manager has at least # users with the IAM manager role
+3000632 - Check whether Secrets Manager has at least # service IDs with the IAM manager role
+3000637 - Check whether Secrets Manager service access is managed only by IAM access groups
+3000706 - Check whether App ID user data is encrypted
+3000305 - Check whether Event Streams is accessible through public endpoints
+3000306 - Check whether Event Streams is accessible only by using private endpoints
+3000307 - Check whether Event Streams network access is restricted to a specific IP range
+3000703 - Check whether App ID redirect URIs are using HTTPS only
+3000704 - Check whether App ID redirect URIs are not using localhost or 127.0.0.1
+3000705 - Check whether App ID redirect URIs are not using wildcards (*)
+3000708 - Check whether App ID Cloud Directory users aren't able to update their own accounts
+3000709 - Check whether App ID Cloud Directory users aren't able to update their own accounts
+3000712 - Check whether App ID anonymous authentication is disabled
+3000713 - Check whether App ID anonymous authentication is disabled
+3000714 - Check whether App ID advanced password policies are enabled
+3000715 - Check whether App ID avoid password reuse policy is enabled
+3000718 - Check whether App ID avoid password reuse policy is enabled
+3000719 - Check whether App ID password expiration policy is enabled
+3000720 - Check whether App ID prevent username in password policy is enabled
+3000723 - Check whether App ID multifactor authentication (MFA) is enabled for Cloud Directory users
+3000724 - Check whether App ID access tokens are configured to expire within # minutes
+3000802 - Check whether Kubernetes Service is accessible only by using private endpoints
+3000804 - Check whether Kubernetes Service clusters are enabled with IBM Cloud Monitoring
+3000805 - Check whether Kubernetes Service clusters are enabled with IBM Log Analysis
+3000902 - Check whether OpenShift clusters are accessible only by using private endpoints
 3000907 - Check whether OpenShift version is up-to-date
+```
+
+### {{site.data.keyword.compliance_short}} rules
+{: #terraform-scc-rules}
+
+The Terraform Analyzer supports the following {{site.data.keyword.compliance_short}} rules:
+
+```text
+rule-f8722625-1968-4d7a-93cb-4b0f8da726da - Check whether IBMid password policy requires at least one uppercase letter
+rule-789cb35b-5bdf-46d3-8b59-e1377e3b211c - Check whether IBMid password policy requires at least one lowercase letter
+rule-81b36ae4-0f15-41c7-adac-fa9586ff46ab - Check whether IBMid password policy requires at least one number
+rule-979fd713-d39f-4efe-ba02-bf6fc07e57bb - Check whether IBMid password policy requires minimum length of 12 characters
+rule-e76a3a81-b0d0-41fc-947d-13dc9cfff379 - Check whether IBMid password policy prevents password reuse below the minimum of #
+rule-759d504b-9eed-4602-8b5b-7244bf3f5690 - Check whether IBMid password may contain only printable ASCII characters (in the range 33 - 126)
+rule-bcbd57e1-3cdc-4b6d-820b-2c63bc777e19 - Check whether IBMid password policy contains spaces or any of the following characters: ;:("?)<>
+rule-fa06f6f2-b98e-49ac-aa55-d57de9e320d3 - Check whether IBMid uses a password meter that coaches users to create strong passwords that exceed the minimum requirements
+rule-548a3321-6a39-400c-9c2d-0df9a13afd02 - Check whether IAM roles are used to create IAM policies for IBM resources
+rule-726ec899-505e-4de9-ac1b-9578ef62f89f - Check whether a support role has been assigned in IAM to manage cases in the IBM Cloud Support Center
+rule-962e2bde-2a4f-4e07-a352-ce17708b1e85 - Check whether API keys are not created in IAM during the initial setup of IAM users
+rule-61fa114a-2bb9-43fd-8068-b873b48bdf79 - Check whether IAM users are attached to at least one access group
+rule-4d86c074-097e-4ff3-a763-ccff128388e2 - Check whether multifactor authentication (MFA) is enabled at the account level
+rule-0704e840-e443-4781-b9be-ec57469d09c1 - Check whether permissions for API key creation are limited and configured in IAM settings for the account owner
+rule-d61c20c9-c0be-443b-af0c-0d900601e154 - Check whether Cloud Object Storage public access is disabled in IAM settings (not applicable to ACLs managed using S3 APIs)
+rule-0244c010-fde6-4db3-95aa-8952bd292ac3 - Check whether permissions for service ID creation are limited and configured in IAM settings for the account owner
+rule-ed64fa73-81e5-4920-8519-acfad845dd6c - Check whether Identity and Access Management (IAM) is enabled with audit logging
+rule-b2232217-34a6-4fe8-a791-5903f1cc89ca - Check whether Cloud Shell is disabled in account settings
+rule-10de7433-19e4-40a7-aebf-eddf1f75a68c - Check whether Cloud Object Storage is enabled with encryption
+rule-7c86bb59-d677-422d-875c-0259053fad20 - Check whether Cloud Object Storage is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
+rule-222d6531-1fc7-4485-8771-35eb46c78877 - Check whether Cloud Object Storage is accessible only through HTTPS
+rule-7c52a1ce-26cd-4cde-baa7-3bfb3703cf74 - Check whether Cloudant is accessible only through HTTPS
+rule-f6197ee2-31bf-4d73-aacd-316c41a48df3 - Check whether Cloud Object Storage is accessible only by using private endpoints
+rule-8cbd597c-7471-42bd-9c88-36b2696456e9 - Check whether Cloud Object Storage network access is restricted to a specific IP range
+rule-c97259ee-336d-4c5f-b436-1868107a9558 - Check whether Cloud Object Storage is enabled with customer-managed encryption and Keep Your Own Key (KYOK)
+rule-ef1db4bb-2490-48a9-883c-a20fea3db0e5 - Check whether Databases for MongoDB is enabled with encryption
+rule-7f7ca588-9412-40a9-9bd8-0e5d19141e98 - Check whether Databases for MongoDB is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
+rule-77b99b6f-51dc-4290-b20c-7003941c7a46 - Check whether Databases for MongoDB is accessible only through HTTPS
+rule-7b210b18-f849-4fa8-bd92-8e47921de51d - Check whether Databases for MongoDB is accessible only by using private endpoints
+rule-c58bb2b9-7942-45ab-b9d4-e39c8430f570 - Check whether Databases for Redis is enabled with encryption
+rule-e3cad136-17a8-4227-b8af-0be609da1da0 - Check whether Databases for Redis is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
+rule-90e3908d-27c3-4050-bb12-413dfc606f5c - Check whether Databases for Redis is accessible only through HTTPS
+rule-c48dfb73-ede0-4ebf-b912-214379cd4ce7 - Check whether Databases for Redis is accessible only by using private endpoints
+rule-ac09e136-8581-416a-a865-e9fc35a758be - Check whether Databases for Elasticsearch is enabled with encryption
+rule-871594ca-0a70-492b-8a42-6f9474445f01 - Check whether Databases for Elasticsearch is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
+rule-47ca5017-27e9-4b8b-95d3-c2529271fbb1 - Check whether Databases for Elasticsearch is accessible only through HTTPS
+rule-026e6d36-6a15-4623-846d-cab6f3b789d9 - Check whether Databases for Elasticsearch is accessible only by using private endpoints
+rule-d634caeb-e5a6-467a-a4ac-8da8fd39f9ef - Check whether Databases for etcd is enabled with encryption
+rule-42612696-2b8e-4fa7-8c17-78f191d2e1a0 - Check whether Databases for etcd is accessible only through HTTPS
+rule-458decc2-a081-4c49-8f31-eeaf4833d8c8 - Check whether Databases for etcd is accessible only by using private endpoints
+rule-4d7e56d6-f657-418c-9e49-6d248b2cf5a6 - Check whether Databases for PostgreSQL is enabled with encryption
+rule-041ff30b-7167-4411-985d-5ad32ab6f850 - Check whether Databases for PostgreSQL is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
+rule-872db4fc-2f7c-4ba0-ace7-dc468f6813c7 - Check whether Databases for PostgreSQL is accessible only through HTTPS
+rule-094495cf-c092-4dcb-96b8-3654c4bcf787 - Check whether Databases for PostgreSQL is accessible only by using private endpoints
+rule-beb7b289-706b-4dc0-b01d-b1d15d4331e3 - Check whether Databases for MongoDB network access is restricted to a specific IP range
+rule-04d856f1-68ce-4cba-b800-ba49f3c4f1a1 - Check whether Databases for Redis network access is restricted to specific IP range
+rule-b5c06228-3f38-4d98-837f-2fe10d6ff9d5 - Check whether Databases for Elasticsearch network access is restricted to a specific IP range
+rule-18540c4e-b96d-4ab9-a619-d541cc5a2824 - Check whether Databases for etcd network access is restricted to a specific IP range
+rule-9b2d8054-bc93-44fd-901b-91f677287e84 - Check whether Databases for PostgreSQL network access is restricted to a specific IP range
+rule-f6b7a692-8e48-4e74-b957-f5d591a7a15d - Check whether Key Protect has high availability
+rule-d0725d07-27e6-4079-a3bc-746d5ccae00f - Check whether Hyper Protect Crypto Services instance is enabled with a dual authorization deletion policy
+rule-da567ec9-8e24-4c65-993b-ad290bfdb855 - Check whether Cloud Object Storage buckets are enabled with IBM Activity Tracker
+rule-0fb54bb2-773b-4cec-81b0-1ca7d8049ba0 - Check whether Cloud Object Storage buckets are enabled with IBM Cloud Monitoring
+rule-5910ed25-7ad7-42d0-8e42-905df0123346 - Check whether IBM Activity Tracker is provisioned in multiple regions in an account
+rule-d592e06a-8756-4efc-a401-1ec215168f48 - Check whether IBM Activity Tracker trails are integrated with LogDNA logs
+rule-c98fab05-5119-451a-b100-35df840d2326 - Check whether IBM Activity Tracker logs are encrypted at rest
+rule-1cdad315-c39e-4d7e-99ef-8af88ba410c1 - Check whether Cloud Internet Services (CIS) has web application firewall enabled
+rule-564ed93b-1927-4562-8a90-fbae173cdee1 - Check whether Cloud Internet Services (CIS) has DDoS protection enabled
+rule-7c5f6385-67e4-4edf-bec8-c722558b2dec - Check whether Virtual Private Cloud (VPC) security groups have no inbound rules that specify source IP 0.0.0.0/0 to SSH port
+rule-9653d2c7-6290-4128-a5a3-65487ba40370 - Check whether Virtual Private Cloud (VPC) security groups have no inbound rules that specify source IP 0.0.0.0/0 to RDP port
+rule-96527f89-1867-4581-b923-1400e04661e0 - Check whether Virtual Private Cloud (VPC) has no rules in the default security group
+rule-216e2449-27d7-4afc-929a-b66e196a9cf9 - Check whether Flow Logs for VPC are enabled
+rule-4f477e09-c9aa-4bfb-a6b1-eaeaca15c06a - Check whether Virtual Private Cloud (VPC) security groups have no inbound ports open to the internet (0.0.0.0/0)
+rule-9407e5a8-ec51-4228-a01a-0f32364224a6 - Check whether Virtual Private Cloud (VPC) security groups have no outbound ports open to the internet (0.0.0.0/0)
+rule-65f42d91-d537-4532-a2c8-c5cd377500a7 - Check whether all virtual server instances have at least one Virtual Private Cloud (VPC) security group attached
+rule-9e16b8a4-1255-474e-a8a3-afed67de2627 - Check whether all network interfaces of a virtual server instance have at least one Virtual Private Cloud (VPC) security group attached
+rule-9ecf7e84-aa51-42ad-875e-58e9522a5e65 - Check whether VPN for VPC has Internet Key Exchange (IKE) policy encryption that is not set to "triple_des"
+rule-b4c58eff-4d19-4d33-840e-56b2ac76585a - Check whether VPN for VPC has Internet Key Exchange (IKE) policy authentication that is set to minimum "sha256"
+rule-a8a69cd6-a902-4144-b652-8be68600a029 - Check whether VPN for VPC has a Diffie-Hellman group set to at least group #
+rule-f98453ba-ebb9-4d96-aa13-09ef808fb4ba - Check whether VPN for VPC has IPsec policy encryption that is not set to "triple_des"
+rule-09298b01-e2c5-43f1-a1b4-0b413fe4f998 - Check whether VPN for VPC has IPsec policy authentication that is set to minimum "sha256"
+rule-115eb377-e256-459d-9e17-a868e128bd0c - Check whether VPN for VPC has an IPsec policy that does not have Perfect Forward Secrecy (PFS) disabled
+rule-d8d13c3e-5ca0-46c5-a055-2475852c4ec6 - Check whether VPN for VPC authentication is configured with a strong pre-shared key with at least # characters
+rule-53895d42-9190-47d8-9a70-0c1ebea5f7c7 - Check whether VPN for VPC has a Dead Peer Detection policy that is set to "restart"
+rule-200dc6e7-96f1-49a9-9999-7e4645dc7ea6 - Check whether Application Load Balancer for VPC has public access disabled
+rule-0e5151b1-9caf-433c-b4e5-be3d505e458e - Check whether Application Load Balancer for VPC is configured with multiple members in the pool
+rule-bfc9d304-a086-43c0-b3ba-d0f101f616df - Check whether Application Load Balancer for VPC listener is configured with default pool
+rule-8c923215-afdc-41b1-886c-64ce78741f8c - Check whether Application Load Balancer for VPC has health check configured when created
+rule-d491a44c-e7bc-46bc-af07-231da0bb6501 - Check whether Application Load Balancer for VPC has a health check protocol that is either HTTP or HTTPS
+rule-cb1180b7-2f8c-40ba-b2dd-207bee6bc17f - Check whether Application Load Balancer for VPC pool uses the HTTPS protocol for HTTPS listeners
+rule-65b61a0f-ffdb-41ba-873d-ad329e7fc0ee - Check whether Application Load Balancer for VPC is configured to convert HTTP client requests to HTTPS
+rule-d544f217-3723-4376-b3aa-037c5f201e8d - Check whether Application Load Balancer for VPC uses HTTPS (SSL & TLS) instead of HTTP
+rule-773385ab-4654-4088-883d-fe9d58bc4ecb - Check whether Block Storage for VPC is enabled with customer-managed encryption and Bring Your Own Key (BYOK)
+rule-8ffe83cb-0ba1-47d6-a1e0-53e9932a5691 - Check whether Block Storage for VPC is enabled with customer-managed encryption and Keep Your Own Key (KYOK)
+rule-f87929f7-0787-4749-a1ce-35c1f2320401 - Check whether data disks are encrypted with customer-managed keys
+rule-390aa9af-c497-4ebc-9958-d572a5b7be3d - Check whether unattached disks are encrypted with customer-managed keys
+rule-0f7e7e60-a05c-43a7-be74-70615f14a342 - Check whether Security Groups for VPC contains no outbound rules in security groups that specify source IP 8.8.8.8/32 to DNS port
+rule-c4d50b06-9331-4f5c-a3f8-9fe8060efc9b - Check whether Security Groups for VPC doesn't allow PING for the default security group
+rule-936158a6-40ff-48ca-91a1-f184aa9b0dff - Check whether Virtual Private Cloud (VPC) classic access is disabled
+rule-64c0bea0-8760-4a6b-a56c-ee375a48961e - Check whether Virtual Private Cloud (VPC) has no public gateways attached
+rule-64e628f7-4f3a-4c0e-85a4-40300bafe856 - Check whether Virtual Private Cloud (VPC) network access control lists don't allow ingress from 0.0.0.0/0 to any port
+rule-f9137be8-2490-4afb-8cd5-a201cb167eb2 - Check whether Virtual Private Cloud (VPC) network access control lists don't allow ingress from 0.0.0.0/0 to SSH port
+rule-f1e80ee7-88d5-4bf2-b42f-c863bb24601c - Check whether Virtual Private Cloud (VPC) network access control lists don't allow ingress from 0.0.0.0/0 to RDP port
+rule-faacfd1f-454f-4e60-95d7-8fe01158840d - Check whether Virtual Private Cloud (VPC) network access control lists don't allow egress from 0.0.0.0/0 to any port
+rule-c0314fad-f377-465e-9f16-fa5aa3d5ebbe - Check whether Virtual Servers for VPC instance has the minimum # interfaces
+rule-17b54156-373a-48f9-b340-a7e47acd87b6 - Check whether Virtual Servers for VPC instance doesn't have a floating IP
+rule-1af31459-ec38-4a58-91b0-956a17a38954 - Check whether Virtual Servers for VPC boot volumes are enabled with customer-managed encryption and Bring Your Own Key (BYOK)
+rule-4aead0cd-fe26-44f1-b552-8ffdbb86422a - Check whether Virtual Servers for VPC boot volumes are enabled with customer-managed encryption and Keep Your Own Key (KYOK)
+rule-a99b5f58-98ef-4208-9a23-e4fa25115d79 - Check whether Virtual Servers for VPC data volumes are enabled with customer-managed encryption and Bring Your Own Key (BYOK)
+rule-df7323fd-0b20-493c-89fe-c0b287817c99 - Check whether Virtual Servers for VPC data volumes are enabled with customer-managed encryption and Keep Your Own Key (KYOK)
+rule-6970e312-329d-44dc-b683-5ab14acd6a42 - Check whether Virtual Servers for VPC is provisioned from an encrypted image
+rule-24e259fb-608e-486f-bb9d-99b78ae0383c - Check whether Virtual Servers for VPC instances are identifable by the workload they are running based on the Auto Scale for VPC instance group definition
+rule-250a7311-0cfd-4b43-8987-e5629f8d99ae - Check whether Application Load Balancer for VPC has application port of the workload that is identifiable by the Auto Scale for VPC instance group definition
+rule-c2dd768e-9a49-4d6d-8ac5-8fcfb233a7b0 - Check whether Virtual Private Cloud (VPC) has no subnet with public gateway attached
+rule-24508beb-c00a-4c6b-bd04-d38dd8cb7d71 - Check whether App ID user data is encrypted
+rule-65196a37-ddcc-422d-8096-09955c4b4e5d - Check whether Event Streams is accessible through public endpoints
+rule-3b2768e5-d783-4b0c-a47f-81479af34689 - Check whether Event Streams is accessible only by using private endpoints
+rule-c471b983-9dc5-4659-8fb1-4d20c9d516cc - Check whether App ID redirect URIs are using HTTPS only
+rule-f4d30138-01c1-409d-a469-fa99a23f2fbd - Check whether App ID redirect URIs are not using localhost or 127.0.0.1
+rule-6e0c618d-523d-4352-a1d1-12bb9905b914 - Check whether App ID redirect URIs are not using wildcards (*)
+rule-1d2287c7-954e-4425-897b-351c30be723c - Check whether App ID Cloud Directory users aren't able to update their own accounts
+rule-9786160b-ee91-45ab-b84b-9806541e0fc6 - Check whether App ID Cloud Directory users aren't able to self-sign up to applications
+rule-d9247d0e-dce5-4854-849a-4a9033c8fe8d - Check whether App ID anonymous authentication is disabled
+rule-9246d682-f7c5-4aac-8751-3947e4f27b0b - Check whether App ID password strength regex is configured
+rule-168f8081-dbd6-4cbc-bf19-f9934b39d59c - Check whether App ID advanced password policies are enabled
+rule-dd1600d2-2e69-4ada-bca5-9e70b76ccd21 - Check whether App ID avoid password reuse policy is enabled
+rule-5b662adf-fcac-4081-a10d-1aa7109aba4e - Check whether App ID password expiration policy is enabled
+rule-59cb7d09-feab-48fc-b18b-ee581ca1761e - Check whether App ID prevent username in password policy is enabled
+rule-0b082506-2481-4212-a150-d198357fcc3a - Check whether App ID multifactor authentication (MFA) is enabled for Cloud Directory users
+rule-91734f9f-b8ff-4bfd-afb3-db4f789ac38f - Check whether App ID access tokens are configured to expire within # minutes
+rule-ded212fe-7def-44ce-9480-0487067b64c4 - Check whether Kubernetes Service clusters are accessible only by using private endpoints
+rule-2325054a-c338-474a-9740-0b7034487e40 - Check whether OpenShift clusters are accessible only by using private endpoints
+rule-de84afba-b83a-41d6-8c80-d0b6acafe039 - Check whether OpenShift version is up-to-date
 ```
 
 ## NetworkPolicy analysis
