@@ -8,7 +8,6 @@ toc:
     product-page: "https://www.ibm.com/cloud/continuous-delivery"
     path: code-risk-analyzer-cli-plugin
     label: IBM Cloud Code Risk Analyzer CLI
-
   entries: 
   - navgroup: 
       id: reference
