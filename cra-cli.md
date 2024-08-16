@@ -1,5 +1,5 @@
 ---
- 
+
 copyright:
   years: 2021, 2024
 lastupdated: "2024-02-06"
@@ -15,7 +15,7 @@ keywords: code risk analyzer, cli, code risk analyzer command line, code risk an
 # Code Risk Analyzer plug-in for {{site.data.keyword.cloud_notm}}
 {: #cra-cli-plugin}
 
-The {{site.data.keyword.cloud}} command-line interface (CLI) provides code risk analysis commands. You can use the {{site.data.keyword.cloud_notm}} CLI to analyze your code for vulnerabilities and compliance with certain rules. Code Risk Analyzer is available in all {{site.data.keyword.cloud_notm}} regions in which toolchains are supported.
+The {{site.data.keyword.cloud}} command-line interface (CLI) provides commands for code risk analysis. You can use the {{site.data.keyword.cloud_notm}} CLI to analyze your code for vulnerabilities and compliance with certain rules. Code Risk Analyzer is available in all {{site.data.keyword.cloud_notm}} regions in which toolchains are supported.
 {: shortdesc}
 
 You can use the CLI to complete the following tasks:
@@ -56,11 +56,11 @@ Code Risk Analyzer examines source code and image dependencies in your repositor
 | Ubuntu image | All stable versions with vendor security support. | [Ubuntu CVE Tracker](https://launchpad.net/ubuntu-cve-tracker){: external}. |
 | Go, npm (JavaScript), Maven (Java), PyPI (Python), RubyGems (Ruby) and Packagist (PHP) | All stable versions with vendor security support. | [Open Source Vulnerability database](https://osv-vulnerabilities.storage.googleapis.com/){: external}. |
 {: caption="Table 2. Supported dependencies that Code Risk Analyzer checks for vulnerabilities" caption-side="top"}
-	                                                                                                                        
+
 ## Known issues with Code Risk Analyzer
 {: #cra-known-issues}
 
-Code Risk Analyzer cannot discover vulnerabilities on application packages that do not use a versioning scheme, such as `major.minor.patch`. For example, pre-release versions or versions that contain build metadata are not supported. 
+Code Risk Analyzer cannot discover vulnerabilities on application packages that do not use a versioning scheme, such as `major.minor.patch`. For example, pre-release versions or versions that contain build metadata are not supported.
 
 ## Prerequisites
 {: #prerequisites}
@@ -70,7 +70,7 @@ Code Risk Analyzer cannot discover vulnerabilities on application packages that 
 * Install the Code Risk Analyzer CLI plug-in by running the following command:
 
 ```sh
-ibmcloud plugin install cra 
+ibmcloud plugin install cra
 ```
 
 * Make sure that you can access a toolchain in one of the supported regions. The toolchain is not required to have any tools. For more information about toolchains, see [Creating a toolchain from an app](/docs/ContinuousDelivery?topic=ContinuousDelivery-toolchains_getting_started#creating_a_toolchain_from_an_app).
@@ -82,7 +82,7 @@ export TOOLCHAIN_ID=e22195a5-11e3-44ba-9533-e7c18a3a61a7
 ```
 
 * Log in to a specific region of {{site.data.keyword.cloud_notm}} by running the following command, where `[region]` is the region where the toolchain was created.
-  
+
 ```sh
 ibmcloud login -r [region]
 ```
@@ -129,11 +129,11 @@ The `bom-generate` command depends on certain external commands:
 * If the path contains Maven files, this command uses `mvn` to build a list of dependencies. In this scenario, the `bom-generate` command requires the `mvn` command to be available.
 * If the path contains Gradle files, this command uses `gradle` to build a list of dependencies. In this scenario, the `bom-generate` command requires the `gradle` command to be available.
 * If the path contains Node.js `package-json` files and this command is used to generate a corresponding `package-lock.json` file, the `bom-generate` command uses `npm` to build the package-lock.json file. In this scenario, the command requires the `npm` command to be available.
-* If the path contains the Python requirements.txt file, the command uses `pip` to generate the package dependencies. In this scenario, the `bom-generate`command requires the `pip` command to be available. Both Python version 2 and Python version 3 are supported. 
+* If the path contains the Python requirements.txt file, the command uses `pip` to generate the package dependencies. In this scenario, the `bom-generate`command requires the `pip` command to be available. Both Python version 2 and Python version 3 are supported.
 
-If you are using Dockerfiles, make sure to log in to your container registry from where the base images are to be pulled. 
+If you are using Dockerfiles, make sure to log in to your container registry from where the base images are to be pulled.
 
-If your Dockerfile requires ARGS, set an individual ARG as an environment variable before you run the command.  For example, if the Dockerfile is using an `IAM_USER` ARG, export an environment variable that is named `IAM_USER`: `export IAM_USER='value'`. The CLI automatically passes these environment variables to the `docker build` command.  
+If your Dockerfile requires ARGS, set an individual ARG as an environment variable before you run the command.  For example, if the Dockerfile is using an `IAM_USER` ARG, export an environment variable that is named `IAM_USER`: `export IAM_USER='value'`. The CLI automatically passes these environment variables to the `docker build` command.
 
 You can also specify the `DOCKERBUILDFLAGS` flag explicitly. To export `DOCKERBUILDFLAGS` with the ARGS Docker flag, type the following command:
 
@@ -141,10 +141,10 @@ You can also specify the `DOCKERBUILDFLAGS` flag explicitly. To export `DOCKERBU
 export DOCKERBUILDFLAGS="--build-arg IAM_USER --build-arg API_KEY"
 ```
 
-### BOM command options 
+### BOM command options
 {: #bom-options}
 
-The following table lists the command options that you can use to generate a BOM with the `bom-generate` command. 
+The following table lists the command options that you can use to generate a BOM with the `bom-generate` command.
 
 | Command options                        | Required or optional | Description                                                                                                                                                                                                                                              |
 | -------------------------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -188,7 +188,7 @@ node_modules
 # Exclude the dockerfile from scanning
 Dockerfile
 ```
- 
+
 ### Example
 {: #bom-example}
 
@@ -211,10 +211,10 @@ The `vulnerability-scan` command expects a BOM in `standard` format as input and
 ibmcloud cra vulnerability-scan
 ```
 
-### Vulnerability scan command options 
+### Vulnerability scan command options
 {: #vulnerability-options}
 
-The following table lists the options for using the `vulnerability-scan` command. 
+The following table lists the options for using the `vulnerability-scan` command.
 
 | Command options      | Required or optional | Description                                                                |
 | -------------------- | -------------------- | -------------------------------------------------------------------------- |
@@ -257,7 +257,7 @@ The following properties are supported for each entry in the `.cveignore` file:
 * **alwaysOmit** - If this property is set to `true`, the vulnerability is omitted until it is changed. This property takes precedence over other property values.
 * **untilRemediationAvailable** - If this property is set to `true`, the vulnerability is omitted  until a remediation path is available. If a remediation becomes available, the vulnerability is not omitted and a message is displayed. This property takes precedence over the expiration property value.
 * **expiration** - If this property is set to `true` and the expiration date is not reached, the vulnerability is omitted. If the expiration date is reached, the vulnerability is not omitted and a message is displayed. Use the RFC3339 time format (`yyyy-MM-ddTHH:mm:ss[+-]Z`) to define this property.
- 
+
 The Code Risk Analyzer uses only these defined properties. You can add properties with no effect on functions. If a vulnerability that is defined in the `.cveignore` is not omitted, a log is generated that explains the reason. If a vulnerability that is defined in the `.cveignore` file is omitted, no individual logging is displayed. The number of omissions and a list of the vulnerability IDs, with the package name, that are omitted are logged after a report is completed.
 
 The following code snippet shows a sample `.cveignore` file:
@@ -322,10 +322,10 @@ The following table lists the controls that you can implement within DevSecOps, 
 | -| Ensure that containers are not exposed through a shared host port. | Medium|
 {: caption="Table 5. Security controls" caption-side="top"}
 
-### Deployment command options 
+### Deployment command options
 {: #deployment-options}
 
-The following table lists the command options that you can use for the `deployment-analyze` command. 
+The following table lists the command options that you can use for the `deployment-analyze` command.
 
 | Command options      | Required or optional | Description                                                                         |
 | -------------------- | -------------------- | ----------------------------------------------------------------------------------- |
@@ -351,7 +351,7 @@ ibmcloud cra depl --path ./sampleDir --report deployment-report.json --strict
 ## Terraform Analyzer
 {: #terraform-command}
 
-You can use the `terraform-validate` command to analyze a Terraform plan for compliance before applying the plan to an environment. This command analyzes the specified Terraform plan file for compliance with rules that are specified in {{site.data.keyword.compliance_full}}. This command generates a compliance report. 
+You can use the `terraform-validate` command to analyze a Terraform plan for compliance before applying the plan to an environment. This command analyzes the specified Terraform plan file for compliance with rules that are specified in {{site.data.keyword.compliance_full}}. This command generates a compliance report.
 
 You can specify a policy file that lists the rules and parameters to use for validation. If no policy file is specified, this command analyzes the plan for the default set of rules.
 
@@ -359,10 +359,10 @@ You can specify a policy file that lists the rules and parameters to use for val
 ibmcloud cra terraform-validate
 ```
 
-### Terraform command options 
+### Terraform command options
 {: #terraform-options}
 
-The following table lists the options that you can use for the `terraform-validate` command. 
+The following table lists the options that you can use for the `terraform-validate` command.
 
 | Command options       | Required or optional | Description                                                                                                                               |
 | --------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
@@ -796,7 +796,7 @@ ibmcloud cra tf -r report-user-profile.json -t ./tfplan.json  -p ./user-profile.
 {: #terraform-example-v2-profile}
 
 ```text
-{	
+{
 	"title": "User Profile Standard v2 Schema",
 	"type": "object",
 	"properties": {
@@ -1112,11 +1112,11 @@ The `netpol-analyze` command runs configuration checks on Kubernetes and Calico 
 ibmcloud cra netpol-analyze
 ```
 
-This command checks the connectivity-configuration posture of a Kubernetes application against the [NIST SP 800-53 SC-7(5) control](https://csrc.nist.gov/projects/cprt/catalog#/cprt/framework/version/SP_800_53_5_1_0/home?element=SC-7){: external}. It verifies that the connectivity of every workload is controlled by at least one NetworkPolicy resource, and that nonsecure ports are blocked for both ingress and egress. 
+This command checks the connectivity-configuration posture of a Kubernetes application against the [NIST SP 800-53 SC-7(5) control](https://csrc.nist.gov/projects/cprt/catalog#/cprt/framework/version/SP_800_53_5_1_0/home?element=SC-7){: external}. It verifies that the connectivity of every workload is controlled by at least one NetworkPolicy resource, and that nonsecure ports are blocked for both ingress and egress.
 
 The `netpol-analyze` command can also provide a connectivity report for the scanned application, showing all of the allowed connections between the application workloads. You can use this report as evidence for compliance, or to help debug connectivity issues. You can also use this command to provide lint results for the scanned network policies and then use these results to improve network-policy efficiency and readability. In some cases, lint results might also point to an error in the network policy definitions.
 
-### NetworkPolicy analysis command options 
+### NetworkPolicy analysis command options
 {: #netpol-analyze-options}
 
 The following table lists the command options that you can use for the `netpol-analyze` command.
@@ -1146,7 +1146,7 @@ ibmcloud cra np --path ./sampleDir --report netpol-report.json --strict
 ### Network config analyzer image
 {: #netpol-analyze-image}
 
-The `netpol-analyze` command runs as part of IBM's [Network Config Analyzer (NCA)](https://github.com/IBM/network-config-analyzer){: external}. Because this command runs NCA as a Docker image, you must install [Docker](https://www.docker.com/){: external} on your computer. 
+The `netpol-analyze` command runs as part of IBM's [Network Config Analyzer (NCA)](https://github.com/IBM/network-config-analyzer){: external}. Because this command runs NCA as a Docker image, you must install [Docker](https://www.docker.com/){: external} on your computer.
 
 The image URL for the network policy analyzer is `icr.io/continuous-delivery/cra/nca`.
 {: tip}
@@ -1174,7 +1174,7 @@ For more information about the dependent utility commands that are required by t
 |baseimage-auth-email		|text 		|The credentials for the base image of the application Dockerfile that is required by the Code Risk Analyzer scan.		|Optional			|
 |baseimage-auth-host		|text		|The credentials for the base image of the application Dockerfile that is required by the Code Risk Analyzer scan.	|Optional			|
 |baseimage-auth-password		|SECRET		|The credentials for the base image of the application Dockerfile that is required by the Code Risk Analyzer scan. |Optional			|
-|cra-cveignore-path             |text   |The path to the `cveignore` file that is relative to the root of the application repo. The default file path is `.cra/.cveignore`.   |Optional    | 
+|cra-cveignore-path             |text   |The path to the `cveignore` file that is relative to the root of the application repo. The default file path is `.cra/.cveignore`.   |Optional    |
 | cra-custom-script-path  | text   | The path to a custom script that runs before Code Risk Analyzer scanning. This script is sourced to provide the option to set `ENV` variables in the context of the Code Risk Analyzer BOM tool. | Optional |
 |cra-docker-buildflags          |text   |The custom Docker build command for build stage scanning. This parameter is empty by default.    |Optional    |
 |cra-docker-build-context        | text  |If specified, Code Risk Analyzer uses the directory in the path parameter as the Docker build context.        |Optional    |
@@ -1210,7 +1210,7 @@ fi
 export IAM_USER=$(get_env iam_user_environment_property_name)
 ```
 
-You can also use the `cra-custom-script-path` parameter for scenarios in which the DevSecOps base image tool versions might be outdated, based on your project. For example, you can update commands such as `pip/pip3` for discovering Python packages that require a later pip version. 
+You can also use the `cra-custom-script-path` parameter for scenarios in which the DevSecOps base image tool versions might be outdated, based on your project. For example, you can update commands such as `pip/pip3` for discovering Python packages that require a later pip version.
 
 The following example shows how to use the `cra-custom-script` to update the pip version:
 
@@ -1226,7 +1226,7 @@ fi
 python3 -m pip install --upgrade pip
 ```
 
-If your Dockerfile uses an image from a private Docker registry, you can use the `cra-custom-script-path` parameter to authenticate to a private Docker registry before you run Code Risk Analyzer and to allow Code Risk Analyzer to pull this image for scanning. 
+If your Dockerfile uses an image from a private Docker registry, you can use the `cra-custom-script-path` parameter to authenticate to a private Docker registry before you run Code Risk Analyzer and to allow Code Risk Analyzer to pull this image for scanning.
 
 The following example shows how to use the `cra-custom-script` to authenticate to the `ibmcloud` container registry:
 
@@ -1254,7 +1254,7 @@ FAILED
 Error executing docker pull cmd: [docker pull us.icr.io/opentoolchain/ibmnode:14ubisecure]
 ```
 
-You can verify that you have access to the private registry. If you do not have access, you can use the `cra-custom-script-path` parameter and specify the path to a custom script that runs before Code Risk Analyzer to authenticate to the private registry. 
+You can verify that you have access to the private registry. If you do not have access, you can use the `cra-custom-script-path` parameter and specify the path to a custom script that runs before Code Risk Analyzer to authenticate to the private registry.
 
 ```text
 FAILED
@@ -1288,7 +1288,7 @@ Get answers to frequently asked questions about using the Code Risk Analyzer CLI
 
 ### How can I determine why the CLI failed?
 {: #faq-cli-failure}
- 
+
 Before you call the Code Risk Analyzer CLI, set the `IBMCLOUD_TRACE` environment variable to true to turn on the debug log.
 
 ```sh
@@ -1305,7 +1305,7 @@ Make sure that you are authenticated with the registry where the base image resi
 ### How can I debug a BOM command that is failing to analyze a Dockerfile?
 {: #faq-bom-debug}
 
-* Verify that the Dockerfile does not have any issues by running the  `docker build` command and making sure that it passes.  
+* Verify that the Dockerfile does not have any issues by running the  `docker build` command and making sure that it passes.
 * If your Dockerfile requires ARG to be passed, make sure that the ARG is set as an environment variable. You can also use the `DOCKERBUILDFLAG` environment variable.
 * Authenticate with the registry that contains the base images.
 
@@ -1314,7 +1314,7 @@ Make sure that you are authenticated with the registry where the base image resi
 
 Run the DevSecOps Continuous Deployment (CD) pipeline to generate an updated SBOM in the evidence locker. This might address a potential cause of false positives that results from the presence of an older SBOM that was generated by the DevSecOps Continuous Compliance (CC) pipeline.
 
-### Why is the severity of the report or issue different from the one of the associated vulnerability link? 
+### Why is the severity of the report or issue different from the one of the associated vulnerability link?
 {: #faq-clair-sev}
 
 Since our source of vulnerability information has changed recently, you might see that the severity associated with a particular vulnerability has changed. Code Risk Analyzer will determine the optimal severity based on a computation of all the sources of vulnerabilities.
