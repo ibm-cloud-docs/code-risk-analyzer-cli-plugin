@@ -7,9 +7,10 @@ toc:
     console-page: "/devops/getting-started"
     product-page: "https://www.ibm.com/cloud/continuous-delivery"
     path: code-risk-analyzer-cli-plugin
+    navigation: hidden
     label: IBM Cloud Code Risk Analyzer CLI
-  entries: 
-  - navgroup: 
+  entries:
+  - navgroup:
       id: reference
       topics:
       - cra-cli.md
