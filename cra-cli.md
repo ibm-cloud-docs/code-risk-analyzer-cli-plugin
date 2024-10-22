@@ -21,7 +21,7 @@ The {{site.data.keyword.cloud}} command-line interface (CLI) provides commands f
 You can use the CLI to complete the following tasks:
 
 * Generate a bill of materials (BOM) that lists the dependencies and available license information of all third-party OS packages and application packages. You can also generate this output in CycloneDX-specific format.
-* Discover vulnerabilities in packages that are listed in the BOM. You can also view the generated report in CycloneDX-specific format, or use vulnerability auto-remediation for Node.js, Maven, or Gradle applications.
+* Discover vulnerabilities in packages that are listed in the BOM. You can also view the generated report in CycloneDX-specific format, or use vulnerability auto-remediation for Node.js, Maven, or Gradle (Groovy) applications.
 * Analyze a Terraform plan for compliance with certain rules.
 * Analyze Kubernetes files for compliance with certain rules.
 
@@ -35,7 +35,7 @@ Code Risk Analyzer supports the Java&trade;, Node.js, Python, and Go languages. 
 
 |Content |Description	|
 |:----------|:------------------------------|
-|Java		|The repo must use Maven or Gradle. For Maven, dependencies are computed by using the `pom.xml` file. For Gradle, dependencies are computed by using the `Build.gradle` file. Code Risk Analyzer can also perform auto-remediation for both Maven and Gradle. 		|
+|Java		|The repo must use Maven or Gradle. For Maven, dependencies are computed by using the `pom.xml` file. For Gradle, dependencies are computed by using the `build.gradle(.kts)` file. Code Risk Analyzer can also perform auto-remediation for both Maven and Gradle (Groovy). 		|
 |Node.js		|Dependencies are computed by using the `package-lock.json` file. For Node.js, Code Risk analyzer can also perform auto-remediation. Make sure that the installed version of npm matches the project npm version.		|
 |Python		|Dependencies are computed by using the `requirements.txt` file.		|
 |Golang		|Supports `go mod` and `go dep` dependency management. For `go mod`, the `go.sum` file must be in the repo. For `go dep`, the `Gopkg.lock` file must be in the repo.		|
