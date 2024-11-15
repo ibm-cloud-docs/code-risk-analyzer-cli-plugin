@@ -2,7 +2,7 @@
 
 copyright:
   years: 2021, 2024
-lastupdated: "2024-02-06"
+lastupdated: "2024-11-15"
 
 subcollection: code-risk-analyzer-cli-plugin
 
@@ -35,8 +35,8 @@ Code Risk Analyzer supports the Java&trade;, Node.js, Python, and Go languages. 
 
 |Content |Description	|
 |:----------|:------------------------------|
-|Java		|The repo must use Maven or Gradle. For Maven, dependencies are computed by using the `pom.xml` file. For Gradle, dependencies are computed by using the `build.gradle(.kts)` file. Code Risk Analyzer can also perform auto-remediation for both Maven and Gradle (Groovy). 		|
-|Node.js		|Dependencies are computed by using the `package-lock.json` file. For Node.js, Code Risk analyzer can also perform auto-remediation. Make sure that the installed version of npm matches the project npm version.		|
+|Java		|	The repo requires Maven or Gradle for build automation. Maven utilizes `pom.xml` file to calculate dependencies, and Gradle uses `build.gradle(.kts)` file. Code Risk Analyzer can automate remediation for both Maven and Gradle (Groovy).	|
+|Node.js		|`package-lock.json` file computes the dependencies. For Node.js, Code Risk analyzer can also automate remediation. Ensure the installed npm version matches the project's npm version.		|
 |Python		|Dependencies are computed by using the `requirements.txt` file.		|
 |Golang		|Supports `go mod` and `go dep` dependency management. For `go mod`, the `go.sum` file must be in the repo. For `go dep`, the `Gopkg.lock` file must be in the repo.		|
 | Dockerfiles		|Files with the `Dockerfile` pattern in the repo are considered. For container images, the Debian, Red Hat Enterprise Linux&reg;, Alpine, and Ubuntu Linux distros are supported.  		|
