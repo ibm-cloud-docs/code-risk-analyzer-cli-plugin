@@ -73,7 +73,7 @@ Code Risk Analyzer cannot discover vulnerabilities on application packages that 
 ibmcloud plugin install cra
 ```
 
-* Make sure that you can access a toolchain in one of the supported regions. The toolchain is not required to have any tools. For more information about toolchains, see [Creating a toolchain from an app](/docs/ContinuousDelivery?topic=ContinuousDelivery-toolchains_getting_started#creating_a_toolchain_from_an_app).
+* Make sure that you can access a toolchain in one of the supported regions. The toolchain is not required to have any tools. For more information about toolchains, see [Creating a toolchain from an app](/docs/ContinuousDelivery?topic=ContinuousDelivery-toolchains_getting_started&interface=ui#creating_a_toolchain_from_an_app).
 
 * Specify the toolchain ID by setting the `TOOLCHAIN_ID` environment variable:
 
