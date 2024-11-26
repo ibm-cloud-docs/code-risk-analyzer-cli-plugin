@@ -18,7 +18,7 @@ keywords: code risk analyzer, cli, code risk analyzer command line, code risk an
 The {{site.data.keyword.cloud}} command-line interface (CLI) provides commands for code risk analysis. You can use the {{site.data.keyword.cloud_notm}} CLI to analyze your code for vulnerabilities and compliance with certain rules. Code Risk Analyzer is available in all {{site.data.keyword.cloud_notm}} regions in which toolchains are supported.
 {: shortdesc}
 
-You can use the CLI to complete the following tasks:
+ Use the CLI to complete the following tasks:
 
 * Generate a bill of materials (BOM) that lists the dependencies and available license information of all third-party OS packages and application packages. You can also generate this output in CycloneDX-specific format.
 * Discover vulnerabilities in packages that are listed in the BOM. You can also view the generated report in CycloneDX-specific format, or use vulnerability auto-remediation for Node.js, Maven, or Gradle (Groovy) applications.
