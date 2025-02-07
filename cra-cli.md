@@ -35,8 +35,8 @@ Code Risk Analyzer supports the Java&trade;, Node.js, Python, and Go languages. 
 
 |Content |Description	|
 |:----------|:------------------------------|
-|Java		|	The repo requires Maven or Gradle for build automation. Maven utilizes `pom.xml` file to calculate dependencies, and Gradle uses `build.gradle(.kts)` file. Code Risk Analyzer can automate remediation for both Maven and Gradle (Groovy).	|
-|Node.js		|`package-lock.json` file computes the dependencies. For Node.js, Code Risk analyzer can also automate remediation. Ensure the installed npm version matches the project's npm version.		|
+|Java		|	The repo requires Maven or Gradle for build automation. Maven uses `pom.xml` file to calculate dependencies, and Gradle uses `build.gradle(.kts)` file. Code Risk Analyzer can automate remediation for both Maven and Gradle (Groovy).	|
+|Node.js		|`package-lock.json` file computes the dependencies. For Node.js, Code Risk analyzer can also automate remediation. Ensure that the installed npm version matches the project's npm version.		|
 |Python		|Dependencies are computed by using the `requirements.txt` file.		|
 |Golang		|Supports `go mod` and `go dep` dependency management. For `go mod`, the `go.sum` file must be in the repo. For `go dep`, the `Gopkg.lock` file must be in the repo.		|
 | Dockerfiles		|Files with the `Dockerfile` pattern in the repo are considered. For container images, the Debian, Red Hat Enterprise Linux&reg;, Alpine, and Ubuntu Linux distros are supported.  		|
@@ -54,7 +54,7 @@ Code Risk Analyzer examines source code and image dependencies in your repositor
 | GoogleContainerTools distroless image | All stable versions with vendor security support. | [GoogleContainerTools distroless](https://github.com/GoogleContainerTools/distroless){: external} |
 | Red Hat&reg; Enterprise Linux&reg; (RHEL) image | RHEL 6, RHEL/UBI 7, RHEL/UBI 8, and RHEL/UBI 9 | [{{site.data.keyword.redhat_notm}} Security Data API](https://docs.redhat.com/en/documentation/red_hat_security_data_api/1.0/html-single/red_hat_security_data_api/index){: external}. |
 | Ubuntu image | All stable versions with vendor security support. | [Ubuntu CVE Tracker](https://launchpad.net/ubuntu-cve-tracker){: external}. |
-| Go, npm (JavaScript), Maven (Java), PyPI (Python), RubyGems (Ruby) and Packagist (PHP) | All stable versions with vendor security support. | [Open Source Vulnerability database](https://osv-vulnerabilities.storage.googleapis.com/){: external}. |
+| Go, npm (JavaScript), Maven (Java), PyPI (Python), RubyGems (Ruby), and Packagist (PHP) | All stable versions with vendor security support. | [Open Source Vulnerability database](https://osv-vulnerabilities.storage.googleapis.com/){: external}. |
 {: caption="Supported dependencies that Code Risk Analyzer checks for vulnerabilities" caption-side="top"}
 
 ## Known issues with Code Risk Analyzer
