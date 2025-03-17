@@ -189,6 +189,23 @@ node_modules
 Dockerfile
 ```
 
+### Setting Multiple Docker Build Contexts
+{: #docker-build-context}
+
+When working with multiple Dockerfiles within a single project, you may want to define separate build contexts for each Dockerfile. This can be achieved by using a `.cra/.dockerbuildcontext` file, which is a JSON file that maps Dockerfile paths to their corresponding build contexts.
+
+If a `.cra/.dockerbuildcontext` file exists in your project directory, the CRA Docker build commands will use the specified paths in this file as the build contexts for the associated Dockerfiles. The keys in the JSON object represent the relative paths to the Dockerfiles, while the values specify the relative paths to the respective build contexts.
+
+Here’s an example of a `.dockerbuildcontext` file that defines different build contexts for multiple Dockerfiles:
+
+```json
+{
+  "Dockerfile": "./",
+  "path/to/different/Dockerfile": "./another/Path"
+}
+```
+ {: codeblock}
+
 ### Example
 {: #bom-example}
 
