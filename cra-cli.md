@@ -72,6 +72,7 @@ Code Risk Analyzer cannot discover vulnerabilities on application packages that 
 ```sh
 ibmcloud plugin install cra
 ```
+{: codeblock}
 
 * Make sure that you can access a toolchain in one of the supported regions. The toolchain is not required to have any tools. For more information about toolchains, see [Creating a toolchain from an app](/docs/ContinuousDelivery?topic=ContinuousDelivery-toolchains_getting_started&interface=ui#creating_a_toolchain_from_an_app).
 
@@ -80,12 +81,25 @@ ibmcloud plugin install cra
 ```sh
 export TOOLCHAIN_ID=e22195a5-11e3-44ba-9533-e7c18a3a61a7
 ```
+{: codeblock}
 
 * Log in to a specific region of {{site.data.keyword.cloud_notm}} by running the following command, where `[region]` is the region where the toolchain was created.
 
 ```sh
 ibmcloud login -r [region]
 ```
+{: codeblock}
+
+* Optionally, For enhanced control and security over your data when using CLI, you have the option of using private routes to {{site.data.keyword.cloud_notm}} endpoints. You must first enable virtual routing and forwarding in your account, and then you can enable the use of {{site.data.keyword.cloud_notm}} private service endpoints. For more information about setting up your account to support the private connectivity option, see [Enabling VRF and service endpoints](https://cloud.ibm.com/docs/account?topic=account-vrf-service-endpoint&interface=ui).
+
+Use the following command to log in to a private endpoint where `[region]` is the region where the toolchain was created.
+
+```sh
+ibmcloud login -a private.cloud.ibm.com -r [region]
+```
+{: codeblock}
+
+
 
 ## CLI usage commands
 {: #CLI-usage-commands}
@@ -101,6 +115,7 @@ The following command displays the list of Code Risk Analyzer commands:
 ```sh
 ibmcloud cra --help
 ```
+{: codeblock}
 
 ### Code Risk Analyzer command help
 {: #cra-command-help}
@@ -110,6 +125,7 @@ The following command displays the details of flags that are used with a command
 ```sh
 ibmcloud cra <command> --help
 ```
+{: codeblock}
 
 ## Bill of materials (BOM)
 {: #bom-generate-command}
@@ -119,6 +135,7 @@ The `bom-generate` command accesses artifacts in the specified directory path an
 ```sh
 ibmcloud cra bom-generate
 ```
+{: codeblock}
 
 ### BOM command requirements
 {: #bom-requirements}
@@ -140,6 +157,7 @@ You can also specify the `DOCKERBUILDFLAGS` flag explicitly. To export `DOCKERBU
 ```sh
 export DOCKERBUILDFLAGS="--build-arg IAM_USER --build-arg API_KEY"
 ```
+{: codeblock}
 
 ### BOM command options
 {: #bom-options}
@@ -160,7 +178,7 @@ The following table lists the command options that you can use to generate a BOM
 | `-l`, `--gradleprops` | Optional             | Customize the Gradle command with properties for Gradle dependency scanning. |                                                                                                                                |
 | `-m`, `--maven.excludescopes`          | Optional             | Exclude the Maven scopes, for example: `test,compile`. Example: 'test,compile'. By default, this command option is set to `''`.                                                                                                                                         |
 | `-n`, `--nodejs.createpackagelock`     | Optional             | Enable the task to build the package-lock.json file for node.js projects.                                                                                                                                                                                |
-| `--region`                             | Optional             | The `ibmcloud` region where the toolchain is located.                                                      |
+| `--region`                             | Optional             | The `ibmcloud` region where the toolchain is located. |
 |  `--toolchainid`                       | Optional             | The target toolchain ID to use.                                                      |
 | `-v`, `--verbose`                      | Optional             | Enable verbose log messages.                                                                                                                                                                                                                             |
 {: caption="Command options for generating a BOM" caption-side="top"}
@@ -188,6 +206,7 @@ node_modules
 # Exclude the dockerfile from scanning
 Dockerfile
 ```
+{: codeblock}
 
 ### Setting Multiple Docker Build Contexts
 {: #docker-build-context}
@@ -204,7 +223,7 @@ Here’s an example of a `.dockerbuildcontext` file that defines different build
   "path/to/different/Dockerfile": "./another/Path"
 }
 ```
- {: codeblock}
+{: codeblock}
 
 ### Example
 {: #bom-example}
@@ -214,10 +233,12 @@ The following code snippets show how to use the `bom-generate` command:
 ```sh
 ibmcloud cra bom-generate --path PATH --report REPORT [--asset-type ASSET-TYPE] [--dockerbuildcontext] [--dockerbuildflags DOCKERBUILDFLAGS] [--dockerfilepattern DOCKERFILEPATTERN] [--gradle.excludeconfigurations GRADLE.EXCLUDECONFIGURATIONS] [--maven.excludescopes MAVEN.EXCLUDESCOPES] [--nodejs.createpackagelock] [--prev-report PREV-REPORT] [--region REGION] [--toolchainid TOOLCHAINID] [--verbose]
 ```
+{: codeblock}
 
 ```sh
 ibmcloud cra bom --path . --report bomreport.json
 ```
+{: codeblock}
 
 ## Vulnerability scan
 {: #vulnerability-command}
@@ -227,6 +248,7 @@ The `vulnerability-scan` command expects a BOM in `standard` format as input and
 ```sh
 ibmcloud cra vulnerability-scan
 ```
+{: codeblock}
 
 ### Vulnerability scan command options
 {: #vulnerability-options}
@@ -243,7 +265,7 @@ The following table lists the options for using the `vulnerability-scan` command
 | `--force`     | Optional             | Forces an update for top-level node packages, even when the major version is different. This command is available only with `autofix`. |
 | `--include-nofix`    | Optional             | Include or exclude the reporting of CVEs that do not have known remediations. By default, this option is set to `app`. The `app` option is used to include only app package CVEs with no fixes. The `os` option is used to include only OS package CVEs with no fixes. The `all` option is used to include both app and OS package CVEs with no fixes. The `none` option is used to exclude both app and OS package CVEs with no fixes. |
 | `--path`     | Required if `--autofix` enabled           | The project directory path to scan. This command is available only with `autofix`.  |
-| `--region`     | Optional         | The `ibmcloud` region for the toolchain. |
+| `--region`     | Optional        | The `ibmcloud` region for the toolchain. |
 | `-r`, `--report`     | Optional             | The path to the generated report.                                          |
 | `-o`, `--output`     | Optional             | Selects the CVE report format. You can generate the format output in either Standard CVE format (`standard`) or CycloneDX's VEX format (`cyclonedx`). The default value is `standard`. |
 | `-s`, `--strict`     | Optional             | Results in command failure (exit status 2) when vulnerabilities are found. |
@@ -267,6 +289,7 @@ The following example shows a JSON schema for the `.cveignore` file:
     }
 ]
 ```
+{: codeblock}
 
 The following properties are supported for each entry in the `.cveignore` file:
 
@@ -291,6 +314,7 @@ The following code snippet shows a sample `.cveignore` file:
     }
 ]
 ```
+{: codeblock}
 
 ### Example
 {: #vulnerability-example}
@@ -300,10 +324,12 @@ The following code snippets show how to use the `vulnerability-scan` command:
 ```sh
 ibmcloud cra vulnerability-scan --bom BOM [--cveignore CVEIGNORE] [--report REPORT] [--excludedev] [--include-nofix app,os,all,none] [--region REGION] [--strict] [--toolchainid TOOLCHAINID] [--output OUTPUTFILE]
 ```
+{: codeblock}
 
 ```sh
 ibmcloud cra cve --bom ./bom-file.json --cveignore ./cveignore-example.json --report ./output-vulnerability-report.json --excludedev --include-nofix all --strict
 ```
+{: codeblock}
 
 ## Deployment
 {: #deployment-command}
@@ -313,6 +339,7 @@ The `deployment-analyze` command runs configuration checks on Kubernetes deploym
 ```sh
 ibmcloud cra deployment-analyze
 ```
+{: codeblock}
 
 This command provides prescriptive guidance for establishing a secure configuration posture for Docker containers. The Code Risk Analyzer uses these security configurations as a point of reference and identifies security controls to check in deployment artifacts, such as `.yaml` files, for Kubernetes applications. This command also provides risk assessments for each control failure.
 
@@ -360,10 +387,12 @@ The following code snippets show how to use the `deployment-analyze` command:
 ```sh
 ibmcloud cra deployment-analyze --path PATH --report REPORT [--fileignore FILE_IGNORE] [--strict]
 ```
+{: codeblock}
 
 ```sh
 ibmcloud cra depl --path ./sampleDir --report deployment-report.json --strict
 ```
+{: codeblock}
 
 ## Terraform Analyzer
 {: #terraform-command}
@@ -375,6 +404,7 @@ You can specify a policy file that lists the rules and parameters to use for val
 ```sh
 ibmcloud cra terraform-validate
 ```
+{: codeblock}
 
 ### Terraform command options
 {: #terraform-options}
@@ -400,10 +430,12 @@ The following code snippets show how to use the `terraform-validate` command:
 ```sh
 ibmcloud cra terraform-validate --tf-plan TFPLANFILE --report REPORT [--policy-file POLICYFILE] [--quiet] [--region REGION] [--strict] [--toolchainid TOOLCHAINID] [--verbose] [--attachment-file ATTACHMENT_FILE]
 ```
+{: codeblock}
 
 ```sh
 ibmcloud cra tf -r report-user-profile.json -t ./tfplan.json  -p ./user-profile.json --verbose
 ```
+{: codeblock}
 
 #### Example Terraform plan file for the `terraform-validate` command
 {: #terraform-example-validate}
@@ -808,6 +840,7 @@ ibmcloud cra tf -r report-user-profile.json -t ./tfplan.json  -p ./user-profile.
     }
 }
 ```
+{: codeblock}
 
 #### Example SCC V2 profile file schema for the `terraform-validate` command
 {: #terraform-example-v2-profile}
@@ -914,6 +947,7 @@ ibmcloud cra tf -r report-user-profile.json -t ./tfplan.json  -p ./user-profile.
 	},
 	"required": ["default_parameters", "controls", "profile_name", "profile_version"]
 ```
+{: codeblock}
 
 #### Example SCC V2 classic profile file for the `terraform-validate` command
 {: #terraform-example-v2-classicprofile}
@@ -986,6 +1020,7 @@ You can prefix the rule ID with `rule-`.
   }
 }
 ```
+{: codeblock}
 
 ### {{site.data.keyword.compliance_short}} rules
 {: #terraform-scc-rules}
@@ -1116,6 +1151,7 @@ rule-ded212fe-7def-44ce-9480-0487067b64c4 - Check whether Kubernetes Service clu
 rule-2325054a-c338-474a-9740-0b7034487e40 - Check whether OpenShift clusters are accessible only by using private endpoints
 rule-de84afba-b83a-41d6-8c80-d0b6acafe039 - Check whether OpenShift version is up-to-date
 ```
+{: codeblock}
 
 ## NetworkPolicy analysis
 {: #netpol-analyze-command}
@@ -1128,6 +1164,7 @@ The `netpol-analyze` command runs configuration checks on Kubernetes and Calico 
 ```sh
 ibmcloud cra netpol-analyze
 ```
+{: codeblock}
 
 This command checks the connectivity-configuration posture of a Kubernetes application against the [NIST SP 800-53 SC-7(5) control](https://csrc.nist.gov/projects/cprt/catalog#/cprt/framework/version/SP_800_53_5_1_0/home?element=SC-7){: external}. It verifies that the connectivity of every workload is controlled by at least one NetworkPolicy resource, and that nonsecure ports are blocked for both ingress and egress.
 
@@ -1155,10 +1192,12 @@ The following sample code snippets show how you can use the `netpol-analyze` com
 ```sh
 ibmcloud cra netpol-analyze --path PATH --report REPORT [--connectivity CONNFILE] [--lint LINTFILE] [--strict]
 ```
+{: codeblock}
 
 ```sh
 ibmcloud cra np --path ./sampleDir --report netpol-report.json --strict
 ```
+{: codeblock}
 
 ### Network config analyzer image
 {: #netpol-analyze-image}
@@ -1192,7 +1231,7 @@ For more information about the dependent utility commands that are required by t
 |baseimage-auth-host		|text		|The credentials for the base image of the application Dockerfile that is required by the Code Risk Analyzer scan.	|Optional			|
 |baseimage-auth-password		|SECRET		|The credentials for the base image of the application Dockerfile that is required by the Code Risk Analyzer scan. |Optional			|
 |cra-cveignore-path             |text   |The path to the `cveignore` file that is relative to the root of the application repo. The default file path is `.cra/.cveignore`.   |Optional    |
-| cra-custom-script-path  | text   | The path to a custom script that runs before Code Risk Analyzer scanning. This script is sourced to provide the option to set `ENV` variables in the context of the Code Risk Analyzer BOM tool. | Optional |
+|cra-custom-script-path  | text   | The path to a custom script that runs before Code Risk Analyzer scanning. This script is sourced to provide the option to set `ENV` variables in the context of the Code Risk Analyzer BOM tool. | Optional |
 |cra-docker-buildflags          |text   |The custom Docker build command for build stage scanning. This parameter is empty by default.    |Optional    |
 |cra-docker-build-context        | text  |If specified, Code Risk Analyzer uses the directory in the path parameter as the Docker build context.        |Optional    |
 |cra-exclude-devdependencies		|text		|Specifies whether to exclude dev dependencies from scanning (`true` or `false`). The default value is `false`.	|Optional			|
@@ -1226,6 +1265,7 @@ fi
 
 export IAM_USER=$(get_env iam_user_environment_property_name)
 ```
+{: codeblock}
 
 You can also use the `cra-custom-script-path` parameter for scenarios in which the DevSecOps base image tool versions might be outdated, based on your project. For example, you can update commands such as `pip/pip3` for discovering Python packages that require a later pip version.
 
@@ -1242,6 +1282,7 @@ fi
 
 python3 -m pip install --upgrade pip
 ```
+{: codeblock}
 
 If your Dockerfile uses an image from a private Docker registry, you can use the `cra-custom-script-path` parameter to authenticate to a private Docker registry before you run Code Risk Analyzer and to allow Code Risk Analyzer to pull this image for scanning.
 
@@ -1258,6 +1299,7 @@ fi
 
 ibmcloud cr login
 ```
+{: codeblock}
 
 ### Debugging the Code Risk Analyzer in DevSecOps
 {: #debugging-cra-devsecops}
@@ -1270,6 +1312,7 @@ Make sure that the `run-cra` task does not contain any errors. If the task conta
 FAILED
 Error executing docker pull cmd: [docker pull us.icr.io/opentoolchain/ibmnode:14ubisecure]
 ```
+{: codeblock}
 
 You can verify that you have access to the private registry. If you do not have access, you can use the `cra-custom-script-path` parameter and specify the path to a custom script that runs before Code Risk Analyzer to authenticate to the private registry.
 
@@ -1277,6 +1320,7 @@ You can verify that you have access to the private registry. If you do not have 
 FAILED
 Error executing docker build cmd for stage-0: exit status 1
 ```
+{: codeblock}
 
 If your Dockerfile requires ARGS, the `docker build` command for the build stages fails to build because of the missing ARGS. The `cra-custom-script-path` is required to set up the ARGS as environment variables. For more information about setting up the custom script, see [Example custom scripts for DevSecOps](#devsecops-custom-script-examples).
 
@@ -1288,6 +1332,7 @@ COPY file-to-copy.js file-to-copy.js:
 ------
 failed to compute cache key: "/file-to-copy.js" not found: not found
 ```
+{: codeblock}
 
 By default, the Code Risk Analyzer `bom-generate` command builds the Dockerfiles from the context of the location of the Dockerfile itself. If you want to build the Dockerfiles from the context of the root project directory, use the `cra-docker-build-context` parameter to allow the Code Risk Analyzer to build the Dockerfiles from this context.
 
@@ -1311,6 +1356,7 @@ Before you call the Code Risk Analyzer CLI, set the `IBMCLOUD_TRACE` environment
 ```sh
 export IBMCLOUD_TRACE=true
 ```
+{: codeblock}
 
 Observe the API calls and the responses that are shown in the log to determine the exact reason for failure.
 
